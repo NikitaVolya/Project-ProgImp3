@@ -1,7 +1,7 @@
 CC=gcc
 
-CFLAGS =-W -Wall -std=gnu99 -O2 -pedantic
-LDFLAGS=
+CFLAGS=-W -Wall -std=gnu99 -O2 -pedantic
+LDFLAGS=-lm
 
 TARGET=main
 SRC=$(wildcard *.c)
