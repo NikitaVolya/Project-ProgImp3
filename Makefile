@@ -7,9 +7,16 @@ TARGET=main
 SRC=$(wildcard *.c)
 OBJ=$(SRC:.c=.o)
 
+GENERATOR_TARGET=generator
+GENERATOR_SRC=$(wildcard create/*.c)
+GENERATOR_OBJ=$(GENERATOR_SRC:.c=.o)
+
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
+	$(CC) -o $@ $^ $(LDFLAGS)
+
+$(GENERATOR_TARGET) : $(GENERATOR_OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 
@@ -18,4 +25,4 @@ $(TARGET): $(OBJ)
 
 
 clean:
-	rm -f $(OBJ) $(TARGET) $(DOBJ) $(DTARGET)
+	rm -f $(OBJ) $(TARGET) $(GENERATOR_TARGET) $(GENERATOR_OBJ) *.txt
