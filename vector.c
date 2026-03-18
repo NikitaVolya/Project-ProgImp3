@@ -204,6 +204,16 @@ float get_vector_length(Vector *vector) {
     return res;
 }
 
+float get_distance(Vector *a, Vector *b) {
+    Vector *tmp;
+    float res;
+
+    tmp = sub_vector(b, a);
+    res = get_vector_length(tmp);
+
+    free_vector(tmp);
+    return res;
+}
 
 void set_vector_value(Vector *vector, size_t index, float value) {
     float *v_value;

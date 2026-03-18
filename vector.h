@@ -105,6 +105,14 @@ size_t get_vector_dimensions(Vector *vector);
 float get_vector_length(Vector *vector);
 
 /**
+ * @brief Computes Euclidean distance beetwen two vectors
+ * @param[in] a First vector.
+  * @param[in] b Second vector.
+ * @return distance.
+ */
+float get_distance(Vector *a, Vector *b);
+
+/**
  * @brief Sets value at specified index.
  * @param[in, out] vector Target vector.
  * @param[in] index Index of dimension.
