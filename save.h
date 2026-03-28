@@ -10,41 +10,22 @@
 
 /**
  * @struct Point
- * @brief Represents a point in 2-dimensional space.
- *
- * @var Point::x
- * x coordinate of the point.
- *
- * @var Point::y
- * y coordinate of the point.
- *
- * @var Point::classe
- * classe of the point.
+ * @brief Point: coordinates (dimension floats) and class label.
  */
-
 typedef struct {
-    float x;
-    float y;
+    float * pos;
     int classe;
 } Point;
 
 /**
  * @struct Data
- * @brief Represents a data structure for storing points.
- *
- * @var Data::points
- * Pointer to dynamically allocated array of Point.
- *
- * @var Data::nb_points
- * Number of points.
- *
- * @var Data::nb_classes
- * Number of classes.
+ * @brief Dataset: points, counts, coordinate dimension.
  */
 typedef struct {
     Point * points;
     int nb_points;
     int nb_classes;
+    int dimension;
 } Data;
 
 
@@ -66,19 +47,19 @@ typedef struct {
  * @param[in] file The file to load data from.
  * @param[in,out] data The data structure to store the loaded data.
  */
-void charge_file(FILE * file, Data * data);
+void charge_file( Data * data);
 
 /**
  * @brief Frees the data structure.
  * @param[in] data The data structure to free.
  */
-void free_donnees(Data * data);
+void free_data(Data * data);
 
 /**
  * @brief Displays the data structure.
  * @param[in] data The data structure to display.
  */
-void display_donnees(Data * data);
+void display_data(Data data);
 
 /**
  * @brief Saves the data structure to a file.

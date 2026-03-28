@@ -2,7 +2,7 @@
 #include<stdio.h>
 #include<time.h>
 
-#define dim 2
+
 #define path "./data.txt"
 
 
@@ -16,16 +16,21 @@ FILE* create_file(){
     return file;
 }
 
-void generate_point(FILE * file,int classe){
-    int c ;
+void generate_point(FILE * fichier,int class,int dim){
+    int c ,i;
     float x, y;
-    c = (rand()%classe)+1 ;
-    x = rand()/(float)RAND_MAX*dim-(dim/2.0) ;
-    y = rand()/(float)RAND_MAX*dim-(dim/2.0) ;
 
-    fprintf(file,"%d %f %f\n",c,x,y);
+    c = (rand()%class)+1 ;
+    fprintf(fichier,"%d ",c);
+    fprintf(stdout,"%d ",c);
+    for (i=0;i<dim;i++){
+        x = rand()/(double)RAND_MAX*2-1 ;
+        fprintf(fichier,"%lf ",x);
+        fprintf(stdout,"%lf ",x);
+    }
+    fprintf(fichier,"\n");
+    fprintf(stdout,"\n");
 }
-
 
 int generate_data(int n, int d, int c){
     int i; 
@@ -37,7 +42,7 @@ int generate_data(int n, int d, int c){
     fprintf(file,"%d %d %d\n",n,d,c);
 
     for (i=0;i<n;i++){
-        generate_point(file,c);
+        generate_point(file,c,d);
     }
     
     exit(EXIT_SUCCESS);

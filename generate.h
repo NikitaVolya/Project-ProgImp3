@@ -9,14 +9,6 @@
 #include<time.h>
 
 
-
-/**
- * @def dim
- * @brief Represents the dimension of the points.
- */
- #define dim 2
-
-
  /**
   * @def path
   * @brief Represents the path of the file.
@@ -34,7 +26,7 @@ FILE* create_file();
  * @param[in,out] file Pointer to the file data.txt.
   * @param[in] classe Number of classe. 
  */
-void generate_point(FILE * file,int classe);
+void generate_point(FILE * file,int classe,int dim);
 
 /**
  * @brief The procedure of generation of data
