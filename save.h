@@ -3,34 +3,12 @@
 * @brief creation of fonction for data management
 *
 **/
-
-#include<stdlib.h>
 #include<stdio.h>
-#include<time.h>
-#include"point.h"
-
-
-typedef struct {
-    Point **points;
-    size_t capacity, count;
-    int nb_classes, dimensions;
-} PointsList;
+#include"points_list.h"
 
 
 Point* scan_point(FILE *file, size_t dimensions);
 
-PointsList* create_points_list(size_t start_capacity, int nb_classes, int dimensions);
-
 PointsList* load_points_from_file(FILE *file);
 
 int save_data_to_file(PointsList *list, FILE *file);
-
-void points_list_add_point(PointsList *list, Point *point);
-
-void points_list_remove_point(PointsList *list, size_t index);
-
-void fprint_points_list(FILE *file, PointsList *list);
-
-void print_points_list(PointsList *list);
-
-void free_points_list(PointsList *list);
