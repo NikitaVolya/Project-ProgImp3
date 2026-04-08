@@ -15,6 +15,11 @@ void check_point_on_null(const char *fname, Point *point) {
 Point* create_point(int classe, Vector *position) {
     Point *res;
 
+    if (position == NULL) {
+        fprintf(stderr, "Error while creating Point. position is NULL\n");
+        return NULL;
+    }
+
     /* memory allocation */
     if ((res = (Point*) malloc(sizeof(Point))) == NULL) {
         fprintf(stderr, "create_point interrupted\nError while memory allocation\n");
