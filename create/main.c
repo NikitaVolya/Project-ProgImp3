@@ -10,7 +10,7 @@ void generate_point(FILE * fichier, int class, int dim){
     int c ,i;
     float x;
 
-    c = (rand()%class)+1 ;
+    c = (rand() % class ) + 1 ;
     fprintf(fichier,"%d ",c);
     for (i=0;i<dim;i++){
         x = rand()/(double)RAND_MAX*2-1 ;
@@ -22,6 +22,7 @@ void generate_point(FILE * fichier, int class, int dim){
 
 int main(int argc,char ** argv) {
     int i, n, d, c; 
+    srand(time(NULL));
 
     if (argc != 4) {
         usage(argv[0]);

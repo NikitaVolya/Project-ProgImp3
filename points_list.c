@@ -1,5 +1,17 @@
 #include "points_list.h"
 
+
+PointDistance* create_point_distatnce(Point* target, Point *point) {
+    PointDistance* res;
+
+    if ((res = (PointDistance*) malloc(sizeof(PointDistance))) == NULL) {
+        return NULL;
+    }
+    res->point = target;
+    res->distance = get_distance_to_point(target, point);
+    return res;
+}
+
 PointsList* create_points_list(size_t start_capacity, int nb_classes, int dimensions) {
     PointsList *res;
 
@@ -60,6 +72,14 @@ void points_list_remove_point(PointsList *list, size_t index) {
     list->count--;
 } 
 
+Point* points_list_get_point(PointsList *list, size_t index) {
+    if (list->count <= index) {
+        fprintf(stderr, "Error points_list_get_point. Index out of range\n");
+        exit(EXIT_FAILURE);
+    }
+    return list->points[index];
+}
+
 void fprint_points_list(FILE *file, PointsList *list) {
     size_t i;
 
@@ -80,4 +100,74 @@ void free_points_list(PointsList *list) {
     }
     free(list->points);
     free(list);
+}
+
+int select_class_bf(PointsList *list, Point *target, int k) {
+    Stack *best_stack, *tmp_stack;
+    PointDistance *point, *tmp_point;
+    size_t i;
+    short *classes_count;
+    int best_class, best_count, tmp_class;
+    
+    if (k < 1 || list == NULL || target == NULL)
+        return -1;
+
+    if ((classes_count = (short*) calloc(list->nb_classes, sizeof(short))) == NULL) {
+        fprintf(stderr, "Error while memory allocation");
+        return -1;
+    }
+
+    best_stack = create_stack();
+    tmp_stack = create_stack();
+
+
+    for (i = 0; i < list->count; i++) {
+        /* selecting point and find distance from target */
+        point = create_point_distatnce(list->points[i], target);
+        printf("%3f <=> ", point->distance);
+        print_point(point->point);
+
+        /* transfer all points with grater distance than point to tmp_stack from best_stack */
+        while (!stack_is_empty(best_stack) && 
+              ((PointDistance*) stack_value(best_stack))->distance > point->distance) {
+            stack_push(tmp_stack, stack_pop(best_stack));
+        }
+
+        /* add point to best_stack if enough place */
+        if (get_stack_size(best_stack) < (size_t) k) {
+            stack_push(best_stack, point);
+        }
+
+        /* add points from tmp_stack to best_stack if enough place */
+        while (!stack_is_empty(tmp_stack) && get_stack_size(best_stack) < (size_t) k) {
+            stack_push(best_stack, stack_pop(tmp_stack));
+        }
+
+        /* clear tmp_stack */
+        stack_clear(tmp_stack);
+    }
+
+    best_class = -1;
+    best_count = 0;
+
+    /* counting points and chosing best class */
+    while (!stack_is_empty(best_stack)) {
+        tmp_point = stack_pop(best_stack);
+
+        tmp_class = get_point_classe(tmp_point->point);
+        classes_count[tmp_class - 1]++;
+
+        if (classes_count[tmp_class - 1] >= best_count) {
+            best_class = tmp_class;
+            best_count = classes_count[tmp_class - 1];
+        }
+        free(tmp_point);
+    }
+
+    /* free memory */
+    free_stack(best_stack);
+    free_stack(tmp_stack);
+    free(classes_count);
+
+    return best_class;  
 }

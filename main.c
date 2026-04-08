@@ -6,6 +6,7 @@
 int main(){
     FILE *file;
     PointsList *list;
+    Point *new;
 
     file = fopen("data.txt", "r");
     if (file == NULL) {
@@ -21,18 +22,9 @@ int main(){
     fclose(file);
 
     print_points_list(list);
-    points_list_remove_point(list, 1);
-    print_points_list(list);
 
-
-    if ((file = fopen("output.txt", "w")) == NULL) {
-        fprintf(stderr, "Cant open file\n");
-        exit(EXIT_FAILURE);
-    }
-
-    save_data_to_file(list, file);
-
-    fclose(file);
+    new = create_point(0, create_vector2(0.f, 0.f));
+    printf("Class %d\n", select_class_bf(list, new, 3));
 
     free_points_list(list);
     
