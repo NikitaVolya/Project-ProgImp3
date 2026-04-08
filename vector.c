@@ -28,7 +28,7 @@ inline void check_on_null(const char *function_name, Vector *v) {
  */
 inline void check_on_dimensions(const char *function_name, Vector *a, Vector *b) {
     if (a->dimensions != b->dimensions) {
-        fprintf(stderr, "%s interrupted\nVectors\n", function_name);
+        fprintf(stderr, "%s interrupted\nVectors have different dimensions\n", function_name);
         exit(EXIT_FAILURE);
     }
 }
@@ -204,6 +204,18 @@ float get_vector_length(Vector *vector) {
     return res;
 }
 
+float get_distance(Vector *a, Vector *b) {
+    Vector *tmp;
+    float res;
+
+    check_on_dimensions("get_distance", a, b);
+
+    tmp = sub_vector(b, a);
+    res = get_vector_length(tmp);
+
+    free_vector(tmp);
+    return res;
+}
 
 void set_vector_value(Vector *vector, size_t index, float value) {
     float *v_value;
@@ -307,6 +319,8 @@ Vector* mult_vector(Vector *vector, float value) {
     return res;
 }
 
+
+
 void fprint_vector(FILE *file, Vector *vector) {
     size_t i;
 
@@ -320,7 +334,7 @@ void fprint_vector(FILE *file, Vector *vector) {
         for (i = 0; i < vector->dimensions; i++) {
             if (i != 0)
                 fprintf(file, ", ");
-            fprintf(file, "%f", vector->values[i]);
+            fprintf(file, "%.3f", vector->values[i]);
         }
 
         fprintf(file, " ] >\n");
