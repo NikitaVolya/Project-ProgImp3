@@ -1,29 +1,17 @@
-#include<stdlib.h>
-#include<stdio.h>
 
-#include"point.h"
+#include <stdlib.h>
+#include "save.h"
 
+int main(){
+    Data data ;
+    charge_file(&data);
 
-int main() {
-    Point *p, *p2;
-    Vector *v;
+    display_data(data);
 
-    v = create_vector_with_values(3, 1.f, 2.f, 2.f);
-    p = create_point(1, create_vector_with_values(3, 1.f, 2.f, 4.f));
-    p2 = create_point(1, create_vector_with_values(3, 10.f, 3.f, 2.f));
-    print_point(p);
-    print_point(p2);
+    save_data(&data);
 
-    move_point_to_position(p2, v);
+    display_data(data);
 
-    print_point(p);
-    print_point(p2);
-
-    printf("Distance p -> p2: %f\n", get_distance_to_point(p, p2));
-
-    free_point(p);
-    free_point(p2);
-    free_vector(v);
-
+    free_data(&data);
     exit(EXIT_SUCCESS);
 }
