@@ -21,10 +21,8 @@ int main(){
 
     fclose(file);
 
-    print_points_list(list);
-
-    new = create_point(0, create_vector2(0.f, 0.f));
-    printf("Class %d\n", select_class_bf(list, new, 3));
+    new = create_point(0, create_vector_zero(5));
+    printf("Class %d\n", select_class_bf(list, new, 10));
 
     free_points_list(list);
     

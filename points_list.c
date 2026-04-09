@@ -124,7 +124,7 @@ int select_class_bf(PointsList *list, Point *target, int k) {
     for (i = 0; i < list->count; i++) {
         /* selecting point and find distance from target */
         point = create_point_distatnce(list->points[i], target);
-        printf("%3f <=> ", point->distance);
+        printf("%f <=> ", point->distance);
         print_point(point->point);
 
         /* transfer all points with grater distance than point to tmp_stack from best_stack */
@@ -150,9 +150,13 @@ int select_class_bf(PointsList *list, Point *target, int k) {
     best_class = -1;
     best_count = 0;
 
+    printf("================= NEIBORS ======================\n");
+
     /* counting points and chosing best class */
     while (!stack_is_empty(best_stack)) {
         tmp_point = stack_pop(best_stack);
+        printf("%f <=> ", tmp_point->distance);
+        print_point(tmp_point->point);
 
         tmp_class = get_point_classe(tmp_point->point);
         classes_count[tmp_class - 1]++;
@@ -168,6 +172,8 @@ int select_class_bf(PointsList *list, Point *target, int k) {
     free_stack(best_stack);
     free_stack(tmp_stack);
     free(classes_count);
+
+    set_point_classe(target, best_class);
 
     return best_class;  
 }

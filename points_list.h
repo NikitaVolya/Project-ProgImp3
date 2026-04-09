@@ -14,7 +14,7 @@ typedef struct {
 
 typedef struct {
     Point *point;
-    float distance;
+    double distance;
 } PointDistance;
 
 PointDistance* create_point_distatnce(Point* target, Point *point);

@@ -186,7 +186,7 @@ size_t get_vector_dimensions(Vector *vector) {
     return vector->dimensions;
 }
 
-float get_vector_length(Vector *vector) {
+double get_vector_length(Vector *vector) {
     float sum, res;
     size_t i;
 
@@ -199,12 +199,12 @@ float get_vector_length(Vector *vector) {
         sum += vector->values[i] * vector->values[i];
     }
 
-    res = sqrtf(sum);
+    res = sqrt(sum);
 
     return res;
 }
 
-float get_distance(Vector *a, Vector *b) {
+double get_distance(Vector *a, Vector *b) {
     Vector *tmp;
     float res;
 

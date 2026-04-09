@@ -103,7 +103,7 @@ void move_point_to_position(Point *point, Vector *position);
  * @param[in] destination Second point.
  * @return Euclidean distance.
  */
-float get_distance_to_point(Point *source, Point *destination);
+double get_distance_to_point(Point *source, Point *destination);
 
 /**
  * @brief Prints point to specified file stream.

@@ -94,7 +94,7 @@ void move_point_to_position(Point *point, Vector *position) {
     }
 }
 
-float get_distance_to_point(Point *source, Point *destination) {
+double get_distance_to_point(Point *source, Point *destination) {
 
     /* check input data */
     check_point_on_null("get_distance_to_point : source", source);
