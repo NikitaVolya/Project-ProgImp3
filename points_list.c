@@ -108,6 +108,8 @@ int select_class_bf(PointsList *list, Point *target, int k) {
     size_t i;
     short *classes_count;
     int best_class, best_count, tmp_class;
+    double progress_step, progress;
+    int j, print_progress;
     
     if (k < 1 || list == NULL || target == NULL)
         return -1;
@@ -120,12 +122,28 @@ int select_class_bf(PointsList *list, Point *target, int k) {
     best_stack = create_stack();
     tmp_stack = create_stack();
 
+    progress = 0.f;
+    print_progress = 0;
+    progress_step = PROGRESSBAR_SIZE / (double) list->count;
+
 
     for (i = 0; i < list->count; i++) {
         /* selecting point and find distance from target */
         point = create_point_distatnce(list->points[i], target);
-        printf("%f <=> ", point->distance);
-        print_point(point->point);
+
+        if (print_progress < (int) progress) {
+            print_progress = (int) progress;
+
+            putc('|', stdout);
+            for (j = 0; j < PROGRESSBAR_SIZE; j++) {
+                if (j <= (int) progress - progress_step)
+                    putc('#', stdout);
+                else
+                    putc(' ', stdout);
+            }
+            putc('|', stdout);
+            putc('\n', stdout);
+        }
 
         /* transfer all points with grater distance than point to tmp_stack from best_stack */
         while (!stack_is_empty(best_stack) && 
@@ -145,6 +163,8 @@ int select_class_bf(PointsList *list, Point *target, int k) {
 
         /* clear tmp_stack */
         stack_clear(tmp_stack);
+
+        progress += progress_step;
     }
 
     best_class = -1;

@@ -6,6 +6,8 @@
 #include"point.h"
 #include"stack.h"
 
+#define PROGRESSBAR_SIZE 50
+
 typedef struct {
     Point **points;
     size_t capacity, count;

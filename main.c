@@ -21,7 +21,9 @@ int main(){
 
     fclose(file);
 
-    new = create_point(0, create_vector_zero(5));
+    printf("COUNT: %ld\n", list->count);
+
+    new = create_point(0, create_vector_zero(1));
     printf("Class %d\n", select_class_bf(list, new, 10));
 
     free_points_list(list);

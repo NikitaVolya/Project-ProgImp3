@@ -334,7 +334,7 @@ void fprint_vector(FILE *file, Vector *vector) {
         for (i = 0; i < vector->dimensions; i++) {
             if (i != 0)
                 fprintf(file, ", ");
-            fprintf(file, "%.3f", vector->values[i]);
+            fprintf(file, "%.5f", vector->values[i]);
         }
 
         fprintf(file, " ] >\n");
