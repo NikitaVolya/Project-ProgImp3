@@ -18,7 +18,7 @@ FILE* create_file(){
 
 void generate_point(FILE * fichier,int class,int dim){
     int c ,i;
-    float x, y;
+    float x;
 
     c = (rand()%class)+1 ;
     fprintf(fichier,"%d ",c);
