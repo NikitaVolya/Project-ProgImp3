@@ -1,96 +1,91 @@
 #include "save.h"
 
-void charge_file( Data * data) {
-    FILE * file ;
-    int n, c, i, d, j; 
-    file = fopen(path,"r");
+Point* scan_point(FILE *file, size_t dimensions) {
+    Point *res;
+    size_t i;
+    int class;
+    float tmp;
+
+    if ((res = create_point(0, create_vector(dimensions))) == NULL) {
+        return NULL;
+    }
+
+    if (fscanf(file,"%d", &class) != 1){        
+        fprintf(stderr,"Error while reading point class\n");
+        free_point(res);
+        return NULL;
+    }
+
+    set_point_classe(res, class);
+    
+    for (i = 0; i < dimensions; i++) {
+        if (fscanf(file,"%f",&tmp) != 1){        
+            fprintf(stderr, "Error while reading point position\n");
+            free_point(res);
+            return NULL;
+        }
+        set_point_position(res, i, tmp);
+    }
+
+    return res;
+}
+
+PointsList* load_points_from_file(FILE *file) {
+    PointsList *res;
+    Point *point;
+    int number, classes, dimensions, i;
+
     if (file == NULL){
-        fprintf(stderr,"probleme lors de l'ouverture du fichier data.txt. code:0\n");
-        exit(EXIT_FAILURE);
+        fprintf(stderr,"Error file is NULL\n");
+        return NULL;
     }
-    if (fscanf(file,"%d %d %d\n",&n,&d,&c)!=3 ){
+
+    if (fscanf(file,"%d %d %d\n", &number, &dimensions, &classes)!=3 ){
         fprintf(stderr,"probleme lors de la lecture du fichier data.txt code:1\n.");
-        exit(EXIT_FAILURE);
+        return NULL;
     };
-    data->nb_points = n;
-    data->nb_classes = c;
-    data->dimension = d;
-    data->points = malloc(n * sizeof(Point));
-    for (i = 0; i < n; i++) {
-        data->points[i].pos = malloc((size_t)d * sizeof(float));
-        if (fscanf(file,"%d",&data->points[i].classe)!=1){        
-            fprintf(stderr,"probleme lors de la lecture du fichier data.txt code:2. \n");
-            exit(EXIT_FAILURE);
+
+    if ((res = create_points_list(number, classes, dimensions)) == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < number; i++) {
+        point = scan_point(file, dimensions);
+        if (get_point_classe(point) > res->nb_classes) {
+            free_points_list(res);
+            return NULL;
         }
-        for (j=0;j<d;j++){
-            if (fscanf(file,"%f",&data->points[i].pos[j])!=1){        
-                fprintf(stderr,"probleme lors de la lecture du fichier data.txt code:3.\n");
-                exit(EXIT_FAILURE);
-            }
+        if (point != NULL) {
+            points_list_add_point(res, point);
         }
     }
-    fclose(file);
-}
- 
 
-
-
-void free_data(Data * data) {
-    int i;
-    if (data->points == NULL) return;
-    for (i = 0; i < data->nb_points; i++)
-        free(data->points[i].pos);
-    free(data->points);
-    data->points = NULL;
-    data->nb_points = 0;
+    return res;
 }
 
-void display_data(Data data) {
-    int i,j;
-    for (i = 0; i < data.nb_points; i++) {
-        printf("Point %d: classe = %d", i, data.points[i].classe);
-        for (j = 0; j < data.dimension; j++) {
-            printf(", %f",data.points[i].pos[j]);
-        }
-        printf("\n");
+int save_data_to_file(PointsList *list, FILE *file) {
+    int res;
+    size_t j, i;
+    Point *point;
+
+    res = 0;
+
+    if (fprintf(file,"%ld %d %d\n", list->count, list->dimensions, list->nb_classes) == EOF) {
+        res = 1;
     }
     
-}
-
-
-
-int save_data(Data * data) {
-    int j,k;
-    FILE * file = fopen(path,"w");
-    if (file == NULL){
-        fprintf(stderr,"probleme lors de l'ouverture du fichier data.txt. code:4");
-        exit(EXIT_FAILURE);
-    }
-    fprintf(file,"%d %d %d\n",data->nb_points,data->dimension,data->nb_classes);
-    for (j = 0; j < data->nb_points; j++) {
-        fprintf(file,"%d ", data->points[j].classe);
-        for (k = 0; k < data->dimension; k++) {
-            fprintf(file,"%f ",data->points[j].pos[k]);
+    for (i = 0; i < list->count && res == 0; i++) {
+        point = list->points[i];
+        if (fprintf(file, "%d ", get_point_classe(point)) == EOF) {
+            res = 1;
         }
-        fprintf(file,"\n");
+        for (j = 0; j < get_point_dimensions(point) && res == 0; j++) {
+            if (fprintf(file, "%f ", get_point_position(point, j)) == EOF) {
+                res = 1;
+            }
+        }
+        fprintf(file,  "\n");
     }
-    fclose(file);
-    return 0;
-}
 
-int add_point(Data * data, Point point) {
-    data->points = realloc(data->points, (data->nb_points + 1) * sizeof(Point));
-    data->points[data->nb_points] = point;
-    data->nb_points++;
-    return 0;
-}
-int remove_point(Data * data, int index) {
-    int i;
-    free(data->points[index].pos);
-    for (i = index; i < data->nb_points - 1; i++) {
-        data->points[i] = data->points[i + 1];
-    }
-    data->nb_points--;
-    data->points = realloc(data->points, (size_t)data->nb_points * sizeof(Point));
-    return 0;
+    return res;
 }
