@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "save.h"
+#include "interface.h"
 
 void usage(char * m){
     printf("usage: %s <data_file_directory>",m);
@@ -11,11 +12,14 @@ int main(int argc,char ** argv){
     FILE *file;
     PointsList *list;
     Point *new;
-
+    int k,test;
+    k = 10 ;
     if (argc !=2 ){
         usage(argv[0]);
         exit(EXIT_FAILURE);
     }
+
+    test = interface_lancer();
 
     file = fopen(argv[1], "r");
     if (file == NULL) {
@@ -30,11 +34,11 @@ int main(int argc,char ** argv){
 
     fclose(file);
 
-    new = create_point(0, create_vector_zero(5));
-    printf("Class %d\n", select_class_bf(list, new, 10));
+    new = create_point(0, create_vector_zero(2));
+    printf("Class %d\n", select_class_bf(list, new,k));
 
     free_points_list(list);
     
-
+    printf("%d\n",test);
     exit(EXIT_SUCCESS);
 }
