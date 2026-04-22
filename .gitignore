@@ -3,6 +3,7 @@
 *.db
 *.b
 *.txt
+*.png
 main
 .history/
 generator
