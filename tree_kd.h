@@ -1,5 +1,4 @@
-#include "point.h"
-
+#include "points_list.h"
 
 typedef struct tree_kd {
     Point * P;
@@ -7,12 +6,14 @@ typedef struct tree_kd {
     struct tree_kd * left;
 } tree_kd;
 
-int is_empty_tree(tree_kd * t);
+int is_empty_tree(tree_kd *t);
 
 tree_kd * empty_tree();
 
-tree_kd * create_tree(Vector * V,int classe);
+tree_kd * create_tree(Vector *V, int classe);
 
-void add_tree(tree_kd * t,Vector * v,int classe);
+void add_tree(tree_kd *t, Vector *v, int classe);
 
-void free_tree(tree_kd * t);
+Vector* nearby_area_point(tree_kd *t, Vector *p); 
+
+void free_tree(tree_kd *t);

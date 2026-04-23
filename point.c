@@ -68,6 +68,14 @@ float get_point_position(Point *point, size_t dimension) {
     return get_vector_value(point->position, dimension);
 }
 
+
+Vector* get_point_vector(Point *point) {
+    /* data check */
+    check_point_on_null("get_point_vector", point);
+
+    return point->position;
+}
+
 size_t get_point_dimensions(Point *point) {
     /* data check */
     check_point_on_null("get_point_dimensions_number", point);

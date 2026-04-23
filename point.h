@@ -57,6 +57,8 @@ int get_point_classe(Point *point);
  */
 float get_point_position(Point *point, size_t dimension);
 
+Vector* get_point_vector(Point *point);
+
 /**
  * @brief Sets class label of the point.
  * @param[in, out] point Target point.

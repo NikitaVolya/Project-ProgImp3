@@ -80,6 +80,12 @@ Point* points_list_get_point(PointsList *list, size_t index) {
     return list->points[index];
 }
 
+size_t points_list_get_count(PointsList *list) {
+    if (list == NULL)
+        return 0;
+    return list->count;
+}
+
 void fprint_points_list(FILE *file, PointsList *list) {
     size_t i;
 
@@ -102,48 +108,20 @@ void free_points_list(PointsList *list) {
     free(list);
 }
 
-int select_class_bf(PointsList *list, Point *target, int k) {
+Stack* point_list_select_k_nearby(PointsList *list, Point *target, int k) {
     Stack *best_stack, *tmp_stack;
-    PointDistance *point, *tmp_point;
+    PointDistance *point;
     size_t i;
-    short *classes_count;
-    int best_class, best_count, tmp_class;
-    double progress_step, progress;
-    int j, print_progress;
     
     if (k < 1 || list == NULL || target == NULL)
-        return -1;
-
-    if ((classes_count = (short*) calloc(list->nb_classes, sizeof(short))) == NULL) {
-        fprintf(stderr, "Error while memory allocation");
-        return -1;
-    }
+        return NULL;
 
     best_stack = create_stack();
     tmp_stack = create_stack();
 
-    progress = 0.f;
-    print_progress = 0;
-    progress_step = PROGRESSBAR_SIZE / (double) list->count;
-
-
     for (i = 0; i < list->count; i++) {
         /* selecting point and find distance from target */
         point = create_point_distatnce(list->points[i], target);
-
-        if (print_progress < (int) progress) {
-            print_progress = (int) progress;
-
-            putc('|', stdout);
-            for (j = 0; j < PROGRESSBAR_SIZE; j++) {
-                if (j <= (int) progress - progress_step)
-                    putc('#', stdout);
-                else
-                    putc(' ', stdout);
-            }
-            putc('|', stdout);
-            putc('\n', stdout);
-        }
 
         /* transfer all points with grater distance than point to tmp_stack from best_stack */
         while (!stack_is_empty(best_stack) && 
@@ -163,11 +141,32 @@ int select_class_bf(PointsList *list, Point *target, int k) {
 
         /* clear tmp_stack */
         stack_clear(tmp_stack);
-
-        progress += progress_step;
     }
 
-    best_class = -1;
+    /* free memory */
+    free_stack(tmp_stack);
+
+    return best_stack;  
+}
+
+int select_class_bf(PointsList *list, Point *target, int k) {
+    Stack *best_stack, *tmp_stack;
+    PointDistance *tmp_point;
+    short *classes_count;
+    int best_class, best_count, tmp_class;
+
+    if (k < 1 || list == NULL || target == NULL)
+        return -1;
+
+    if ((classes_count = (short*) calloc(list->nb_classes, sizeof(short))) == NULL) {
+        fprintf(stderr, "Error while memory allocation");
+        return -1;
+    }
+
+    best_stack = point_list_select_k_nearby(list, target, k);
+    tmp_stack = create_stack();
+    
+    best_class = 0;
     best_count = 0;
 
     printf("================= NEIBORS ======================\n");
