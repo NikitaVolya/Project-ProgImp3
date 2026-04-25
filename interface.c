@@ -80,7 +80,8 @@ static void dessiner_zone_affichage(PointsList *list);
 static void dessiner_options_affichage(void);
 static void dessiner_point(Point * P);
 static void dessiner_bouton(int x, int y, int largeur, int hauteur, const char *texte);
-static MLV_Color alea_color(int i);
+static MLV_Color classe_color(int i);
+static char classe_symbole(int i);
 
 static Point* select_point(PointsList * list, int x, int y);
 static int point_dans_rectangle(int x, int y, int rx, int ry, int rw, int rh);
@@ -188,7 +189,7 @@ int interface_lancer(PointsList * list,char * file) {
                 if (point_dans_rectangle(souris_x, souris_y, BOUTON_MODE_X, BOUTON_MODE_Y, BOUTON_MODE_LARGEUR, BOUTON_MODE_HAUTEUR)) {
                     mode = 2;
                 }
-                if (point_dans_rectangle(souris_x, souris_y, ZONE_X, ZONE_Y, ZONE_LARGEUR, ZONE_HAUTEUR)) {
+                if (point_dans_rectangle(souris_x, souris_y, ZONE_X+5, ZONE_Y+5, ZONE_LARGEUR-5, ZONE_HAUTEUR-5)) {
                     classe_new_point = input_box("donner la classe du point : ");
                     points_list_add_point(list,create_point(classe_new_point,create_vector2_with_values((souris_x - 255-ZONE_X)/250.,(souris_y - 255-ZONE_Y)/250.)));
                     last_point = 1;
@@ -196,6 +197,7 @@ int interface_lancer(PointsList * list,char * file) {
                 if (last_point == 1) {
                     if (point_dans_rectangle(souris_x, souris_y, DELETE_POINT_X, DELETE_POINT_Y, DELETE_POINT_LARGEUR, DELETE_POINT_HAUTEUR)) {
                         points_list_remove_point(list,list->count-1);
+                        last_point = 0 ;
                     }
                 }
 
@@ -303,12 +305,15 @@ static void dessiner_options_affichage(void) {
 
 static void dessiner_point(Point * P) {
     int x, y;
+    int classe;
+
     if (get_point_dimensions(P) < 2) return;
 
+    classe = get_point_classe(P);
     x = ZONE_X + get_point_position(P, 0) * 250 + 255 ;
     y = ZONE_Y + get_point_position(P, 1) * 250 + 255 ;
 
-    MLV_draw_filled_circle(x, y, 3, alea_color(get_point_classe(P)));
+    MLV_draw_text(x, y, "%c", classe_color(classe), classe_symbole(classe));
 }
 
 static void dessiner_bouton(int x, int y, int largeur, int hauteur, const char *texte) {
@@ -317,41 +322,41 @@ static void dessiner_bouton(int x, int y, int largeur, int hauteur, const char *
     MLV_draw_text(x + 10, y + 12, texte, COULEUR_TEXTE);
 }
 
-static MLV_Color alea_color(int i) {
+static MLV_Color classe_color(int i) {
     MLV_Color color;
-    if (i == -1) {
+    if (i == 0) {
         color = MLV_COLOR_BLACK;
     }
     else {
-        switch (i % 10) {
-            case 0:
-                color = MLV_COLOR_RED;
-                break;
+        switch (i % 10 ) {
             case 1:
-                color = MLV_COLOR_ORANGE;
-                break;
-            case 2:
-                color = MLV_COLOR_YELLOW;
-                break;
-            case 3:
-                color = MLV_COLOR_GREEN;
-                break;
-            case 4:
-                color = MLV_COLOR_CYAN;
-                break;
-            case 5:
                 color = MLV_COLOR_BLUE;
                 break;
+            case 2:
+                color = MLV_COLOR_RED;
+                break;
+            case 3:
+                color = MLV_COLOR_YELLOW;
+                break;
+            case 4:
+                color = MLV_COLOR_GREEN;
+                break;
+            case 5:
+                color = MLV_COLOR_CYAN;
+                break;
             case 6:
-                color = MLV_COLOR_PURPLE;
+                color = MLV_COLOR_ORANGE;
                 break;
             case 7:
-                color = MLV_COLOR_MAGENTA;
+                color = MLV_COLOR_PURPLE;
                 break;
             case 8:
-                color = MLV_COLOR_BROWN;
+                color = MLV_COLOR_MAGENTA;
                 break;
             case 9:
+                color = MLV_COLOR_BROWN;
+                break;
+            case 10:
                 color = MLV_COLOR_PINK;
                 break;
             default:
@@ -360,6 +365,52 @@ static MLV_Color alea_color(int i) {
         }
     }
     return color ;
+}
+
+
+static char classe_symbole(int i) {
+    char symbole;
+    if (i == 0) {
+        symbole = '*';
+    }
+    else {
+        switch (i % 10 ) {
+            case 1:
+                symbole = 'X';
+                break;
+            case 2:
+                symbole = '+';
+                break;
+            case 3:
+                symbole = '*';
+                break;
+            case 4:
+                symbole = '*';
+                break;
+            case 5:
+                symbole = '*';
+                break;
+            case 6:
+                symbole = '*';
+                break;
+            case 7:
+                symbole = '*';
+                break;
+            case 8:
+                symbole = '*';
+                break;
+            case 9:
+                symbole = '*';
+                break;
+            case 10:
+                symbole = '*';
+                break;
+            default:
+                symbole = '*';
+                break;
+        }
+    }
+    return symbole;
 }
 
 static Point* select_point(PointsList * list, int x, int y) {
