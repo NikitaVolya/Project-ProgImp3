@@ -12,17 +12,16 @@ void usage(char * m){
 void test_tree(PointsList *list) {
     size_t i;
     tree_kd *tree;
-    Point *point;
-    Vector *vector;
+    Point *point, *find_point;
     double distance;
 
     tree = empty_tree();
-    vector = create_vector_with_values(2, 0.5f, 0.5f);
+    find_point = create_point(0, create_vector_with_values(3, 0.199382f, 0.544986f, 0.461983f));
 
     for (i = 0; i < points_list_get_count(list); i++) {
         point = points_list_get_point(list, i);
 
-        distance = get_distance(get_point_vector(point), vector);
+        distance = get_distance(get_point_vector(point), get_point_vector(find_point));
 
         printf("%f <=>", distance);
         print_point(point);
@@ -41,13 +40,14 @@ void test_tree(PointsList *list) {
         }
     }
 
-    print_vector(nearby_area_point(tree, vector));
-
     if (is_empty_tree(tree))
         return;
+
+    print_vector(nearby_area_point(tree, find_point));
+    printf("is in list :%d\n", find_point_in_area(tree, find_point));
     
     free_tree(tree);
-    free_vector(vector);
+    free_point(find_point);
 }
 
 void test_list(PointsList *list) {
@@ -57,7 +57,7 @@ void test_list(PointsList *list) {
 
     printf("\n\n\n");
 
-    target = create_point(0, create_vector_with_values(2, 0.5f, 0.5f));
+    target = create_point(0, create_vector_with_values(3, 0.5f, 0.5f, 0.5f));
 
     for (i = 0; i < points_list_get_count(list); i++) {
         point = points_list_get_point(list, i);

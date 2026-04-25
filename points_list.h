@@ -37,7 +37,7 @@ void print_points_list(PointsList *list);
 
 void free_points_list(PointsList *list);
 
-
+Stack* point_list_select_k_nearby(PointsList *list, Point *target, int k);
 
 int select_class_bf(PointsList *list, Point *point, int k);
 
