@@ -74,10 +74,10 @@
  ******************************************************************************************************************** */
 
 static int input_box(char * text);
-static void dessiner_interface(PointsList * list, size_t classe,int mode, int k);
+static void dessiner_interface(PointsList * list, size_t classe,int mode, int k,int * option_voisinage,int * option_descision);
 static void dessiner_fond(size_t classe,int mode, int k);
 static void dessiner_zone_affichage(PointsList *list);
-static void dessiner_options_affichage(void);
+static void dessiner_options_affichage(int * option_voisinage,int * option_descision);
 static void dessiner_point(Point * P);
 static void dessiner_bouton(int x, int y, int largeur, int hauteur, const char *texte);
 static MLV_Color classe_color(int i);
@@ -93,6 +93,8 @@ static int point_dans_rectangle(int x, int y, int rx, int ry, int rw, int rh);
 
 int interface_lancer(PointsList * list,char * file) {
     int k;
+    int option_voisin;
+    int option_descision;
     int last_point;
     int mode;
     int continuer;
@@ -104,7 +106,8 @@ int interface_lancer(PointsList * list,char * file) {
     MLV_Keyboard_button touche;
     int resultat;
     FILE * File;
-
+    option_voisin = 0;
+    option_descision = 0;
     last_point = 0;
     k = 10;
     mode = 1 ;
@@ -122,7 +125,7 @@ int interface_lancer(PointsList * list,char * file) {
     );
 
     while (continuer) {
-        dessiner_interface(list, classe,mode, k);
+        dessiner_interface(list, classe,mode, k,&option_voisin,&option_descision);
         MLV_actualise_window();
 
         touche = MLV_KEYBOARD_NONE;
@@ -174,6 +177,12 @@ int interface_lancer(PointsList * list,char * file) {
                 fclose(File);
             }
 
+            if (point_dans_rectangle(souris_x, souris_y, ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 45, 15, 15)) {
+                option_voisin = !option_voisin;
+            }
+            if (point_dans_rectangle(souris_x, souris_y, ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 75, 15, 15)) {
+                option_descision = !option_descision;
+            }
             if (mode == 2 ) {
                 if (point_dans_rectangle(souris_x, souris_y, ZONE_X, ZONE_Y, ZONE_LARGEUR, ZONE_HAUTEUR)) {
                     p = select_point(list, souris_x, souris_y);
@@ -243,10 +252,10 @@ static int input_box(char * text) {
     return value;
 }
 
-static void dessiner_interface(PointsList * list, size_t classe,int mode, int k) {
+static void dessiner_interface(PointsList * list, size_t classe,int mode, int k,int * option_voisinage,int * option_descision) {
     dessiner_fond(classe,mode,k);
     dessiner_zone_affichage(list);
-    dessiner_options_affichage();
+    dessiner_options_affichage(option_voisinage,option_descision);
 }
 
 static void dessiner_fond(size_t classe,int mode,int k) {
@@ -290,16 +299,27 @@ static void dessiner_zone_affichage(PointsList * list) {
     }
 }
 
-static void dessiner_options_affichage(void) {
+static void dessiner_options_affichage(int * option_voisinage, int * option_descision) {
     MLV_draw_filled_rectangle(ZONE_OPTIONS_X, ZONE_OPTIONS_Y, ZONE_OPTIONS_LARGEUR, ZONE_OPTIONS_HAUTEUR, COULEUR_PANNEAU);
     MLV_draw_rectangle(ZONE_OPTIONS_X, ZONE_OPTIONS_Y, ZONE_OPTIONS_LARGEUR, ZONE_OPTIONS_HAUTEUR, COULEUR_BORDURE);
 
     MLV_draw_text(ZONE_OPTIONS_X + 45, ZONE_OPTIONS_Y + 15, "Options d'affichage", COULEUR_TEXTE);
 
-    MLV_draw_rectangle(ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 45, 15, 15, COULEUR_BORDURE);
-    MLV_draw_text(ZONE_OPTIONS_X + 40, ZONE_OPTIONS_Y + 42, "voisinage", COULEUR_TEXTE);
+    if (*option_voisinage == 0) {
+        MLV_draw_rectangle(ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 45, 15, 15, COULEUR_BORDURE);
+    }
+    else {
+        MLV_draw_filled_rectangle(ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 45, 15, 15, COULEUR_BORDURE);
+    }
 
-    MLV_draw_rectangle(ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 75, 15, 15, COULEUR_BORDURE);
+    MLV_draw_text(ZONE_OPTIONS_X + 40, ZONE_OPTIONS_Y + 42, "voisinage", COULEUR_TEXTE);
+    if (*option_descision == 0) {
+        MLV_draw_rectangle(ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 75, 15, 15, COULEUR_BORDURE);
+    }
+    else {
+        MLV_draw_filled_rectangle(ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 75, 15, 15, COULEUR_BORDURE);
+    }
+
     MLV_draw_text(ZONE_OPTIONS_X + 40, ZONE_OPTIONS_Y + 72, "prise de decision", COULEUR_TEXTE);
 }
 
