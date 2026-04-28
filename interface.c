@@ -73,9 +73,9 @@
  *                                              STATIQUE DECLARATION
  ******************************************************************************************************************** */
 
-static int input_box(char * text);
-static void dessiner_interface(PointsList * list, size_t classe,int mode, int k,int * option_voisinage,int * option_descision);
-static void dessiner_fond(size_t classe,int mode, int k);
+static char* input_box(char * text);
+static void dessiner_interface(PointsList * list, size_t classe,int mode, int k,int * option_voisinage,int * option_descision,size_t nb_classe);
+static void dessiner_fond(size_t classe,int mode, int k,size_t nb_classe);
 static void dessiner_zone_affichage(PointsList *list);
 static void dessiner_options_affichage(int * option_voisinage,int * option_descision);
 static void dessiner_point(Point * P);
@@ -91,7 +91,7 @@ static int point_dans_rectangle(int x, int y, int rx, int ry, int rw, int rh);
  *                                              FONCTION PUBLIQUE
  ******************************************************************************************************************** */
 
-int interface_lancer(PointsList * list,char * file) {
+int interface_lancer(PointsList * list) {
     int k;
     int option_voisin;
     int option_descision;
@@ -99,7 +99,9 @@ int interface_lancer(PointsList * list,char * file) {
     int mode;
     int continuer;
     int classe_new_point;
+    char * fichier;
     size_t classe;
+    size_t nb_classe;
     int souris_x;
     int souris_y;
     Point * p;
@@ -116,7 +118,7 @@ int interface_lancer(PointsList * list,char * file) {
     souris_x = 0;
     souris_y = 0;
     resultat = 1;
-
+    nb_classe = list->nb_classes;
     MLV_create_window(
         "Projet PROG S4",
         "interface",
@@ -125,7 +127,7 @@ int interface_lancer(PointsList * list,char * file) {
     );
 
     while (continuer) {
-        dessiner_interface(list, classe,mode, k,&option_voisin,&option_descision);
+        dessiner_interface(list, classe,mode, k,&option_voisin,&option_descision,nb_classe);
         MLV_actualise_window();
 
         touche = MLV_KEYBOARD_NONE;
@@ -143,11 +145,12 @@ int interface_lancer(PointsList * list,char * file) {
             }
 
             if (point_dans_rectangle(souris_x, souris_y, BOUTON_K_X, BOUTON_K_Y, BOUTON_K_LARGEUR, BOUTON_K_HAUTEUR)) {
-                k = input_box("Valeur de k :");
+                k = atoi(input_box("Valeur de k :"));
             }
 
             if (point_dans_rectangle(souris_x, souris_y, BOUTON_CHARGER_X, BOUTON_CHARGER_Y, BOUTON_CHARGER_LARGEUR, BOUTON_CHARGER_HAUTEUR)) {
-                File = fopen(file,"r");
+                fichier = input_box("nom du fichier :");
+                File = fopen(fichier,"r");
                 if ((list = load_points_from_file(File))==NULL) {
                     dessiner_bouton(BOUTON_MESSAGE_X, BOUTON_MESSAGE_Y, BOUTON_MESSAGE_LARGEUR, BOUTON_MESSAGE_HAUTEUR, "erreur lors du chargement veillez recommancer");
                     MLV_actualise_window();
@@ -162,7 +165,8 @@ int interface_lancer(PointsList * list,char * file) {
                 fclose(File);
             }
             if (point_dans_rectangle(souris_x, souris_y, BOUTON_SAUVEGARDER_X, BOUTON_SAUVEGARDER_Y, BOUTON_SAUVEGARDER_LARGEUR, BOUTON_SAUVEGARDER_HAUTEUR)) {
-                File = fopen(file,"w");
+                fichier = input_box("nom du fichier :");
+                File = fopen(fichier,"w");
                 if (save_data_to_file(list, File)!=0) {
                     dessiner_bouton(BOUTON_MESSAGE_X, BOUTON_MESSAGE_Y, BOUTON_MESSAGE_LARGEUR, BOUTON_MESSAGE_HAUTEUR, "erreur lors de la sauvegarde veillez recommancer");
                     MLV_actualise_window();
@@ -199,7 +203,7 @@ int interface_lancer(PointsList * list,char * file) {
                     mode = 2;
                 }
                 if (point_dans_rectangle(souris_x, souris_y, ZONE_X+5, ZONE_Y+5, ZONE_LARGEUR-5, ZONE_HAUTEUR-5)) {
-                    classe_new_point = input_box("donner la classe du point : ");
+                    classe_new_point = atoi(input_box("donner la classe du point : "));
                     points_list_add_point(list,create_point(classe_new_point,create_vector2_with_values((souris_x - 255-ZONE_X)/250.,(souris_y - 255-ZONE_Y)/250.)));
                     last_point = 1;
                 }
@@ -223,7 +227,7 @@ int interface_lancer(PointsList * list,char * file) {
  *                                              FONCTION PRIVÉ
  ******************************************************************************************************************** */
 
-static int input_box(char * text) {
+static char* input_box(char * text) {
     char * res;
     MLV_Input_box * box;
     box = MLV_create_input_box(
@@ -242,23 +246,23 @@ static int input_box(char * text) {
 
     MLV_wait_particular_input_box(box, &res);
 
-    int value = 0;
-    if (res != NULL) {
-        value = atoi(res);
-        free(res);
+
+    if (res == NULL) {
+        printf("input box error\n");
+        res = NULL;
     }
 
     MLV_free_input_box(box);
-    return value;
+    return res;
 }
 
-static void dessiner_interface(PointsList * list, size_t classe,int mode, int k,int * option_voisinage,int * option_descision) {
-    dessiner_fond(classe,mode,k);
+static void dessiner_interface(PointsList * list, size_t classe,int mode, int k,int * option_voisinage,int * option_descision,size_t nb_classe) {
+    dessiner_fond(classe,mode,k,nb_classe);
     dessiner_zone_affichage(list);
     dessiner_options_affichage(option_voisinage,option_descision);
 }
 
-static void dessiner_fond(size_t classe,int mode,int k) {
+static void dessiner_fond(size_t classe,int mode,int k,size_t nb_classe) {
     char text[100];
     char textk[100];
     MLV_clear_window(COULEUR_FOND);
@@ -276,9 +280,9 @@ static void dessiner_fond(size_t classe,int mode,int k) {
     dessiner_bouton(BOUTON_REINIT_X, BOUTON_REINIT_Y, BOUTON_REINIT_LARGEUR, BOUTON_REINIT_HAUTEUR, "Reinitialisation");
 
     if (classe > 0) {
-        sprintf(text, "classe du point : %ld", classe);
+        sprintf(text, "classe du point : %ld / max classe : %ld  ", classe,nb_classe);
     } else {
-        sprintf(text, "classe du point :");
+        sprintf(text, "classe du point :  / max classe : %ld  ",nb_classe);
     }
     dessiner_bouton(BOUTON_CLASSE_X, BOUTON_CLASSE_Y, BOUTON_CLASSE_LARGEUR, BOUTON_CLASSE_HAUTEUR, text);
 
@@ -405,25 +409,25 @@ static char classe_symbole(int i) {
                 symbole = '*';
                 break;
             case 4:
-                symbole = '*';
+                symbole = 'X';
                 break;
             case 5:
-                symbole = '*';
+                symbole = '+';
                 break;
             case 6:
                 symbole = '*';
                 break;
             case 7:
-                symbole = '*';
+                symbole = 'X';
                 break;
             case 8:
-                symbole = '*';
+                symbole = '+';
                 break;
             case 9:
                 symbole = '*';
                 break;
             case 10:
-                symbole = '*';
+                symbole = 'X';
                 break;
             default:
                 symbole = '*';

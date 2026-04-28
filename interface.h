@@ -1,6 +1,6 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-int interface_lancer(PointsList * list,char * file);
+int interface_lancer(PointsList * list);
 
 #endif
