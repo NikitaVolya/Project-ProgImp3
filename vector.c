@@ -319,7 +319,23 @@ Vector* mult_vector(Vector *vector, float value) {
     return res;
 }
 
+int check_vector_eq(Vector *a, Vector *b) {
+    int res;
+    size_t i;
+    
+    /* check input data */
+    check_on_null("check_vector_eq", a);
+    check_on_null("check_vector_eq", b);
+    check_on_dimensions("check_vector_eq", a, b);
 
+    res = 1;
+    for (i = 0; i < a->dimensions && res == 1; i++) {
+        if (a->values[i] != b->values[i])
+            res = 0;
+    }
+
+    return res;
+}
 
 void fprint_vector(FILE *file, Vector *vector) {
     size_t i;
@@ -334,7 +350,7 @@ void fprint_vector(FILE *file, Vector *vector) {
         for (i = 0; i < vector->dimensions; i++) {
             if (i != 0)
                 fprintf(file, ", ");
-            fprintf(file, "%.3f", vector->values[i]);
+            fprintf(file, "%.5f", vector->values[i]);
         }
 
         fprintf(file, " ] >\n");

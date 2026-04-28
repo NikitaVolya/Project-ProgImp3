@@ -57,6 +57,8 @@ int get_point_classe(Point *point);
  */
 float get_point_position(Point *point, size_t dimension);
 
+Vector* get_point_vector(Point *point);
+
 /**
  * @brief Sets class label of the point.
  * @param[in, out] point Target point.
@@ -103,7 +105,7 @@ void move_point_to_position(Point *point, Vector *position);
  * @param[in] destination Second point.
  * @return Euclidean distance.
  */
-float get_distance_to_point(Point *source, Point *destination);
+double get_distance_to_point(Point *source, Point *destination);
 
 /**
  * @brief Prints point to specified file stream.

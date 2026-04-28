@@ -15,6 +15,11 @@ void check_point_on_null(const char *fname, Point *point) {
 Point* create_point(int classe, Vector *position) {
     Point *res;
 
+    if (position == NULL) {
+        fprintf(stderr, "Error while creating Point. position is NULL\n");
+        return NULL;
+    }
+
     /* memory allocation */
     if ((res = (Point*) malloc(sizeof(Point))) == NULL) {
         fprintf(stderr, "create_point interrupted\nError while memory allocation\n");
@@ -63,6 +68,14 @@ float get_point_position(Point *point, size_t dimension) {
     return get_vector_value(point->position, dimension);
 }
 
+
+Vector* get_point_vector(Point *point) {
+    /* data check */
+    check_point_on_null("get_point_vector", point);
+
+    return point->position;
+}
+
 size_t get_point_dimensions(Point *point) {
     /* data check */
     check_point_on_null("get_point_dimensions_number", point);
@@ -89,7 +102,7 @@ void move_point_to_position(Point *point, Vector *position) {
     }
 }
 
-float get_distance_to_point(Point *source, Point *destination) {
+double get_distance_to_point(Point *source, Point *destination) {
 
     /* check input data */
     check_point_on_null("get_distance_to_point : source", source);
