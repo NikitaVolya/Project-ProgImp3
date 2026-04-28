@@ -16,4 +16,6 @@ void add_tree(tree_kd *t, Vector *v, int classe);
 
 Vector* nearby_area_point(tree_kd *t, Point *p); 
 
+int find_point_in_area(tree_kd *t, Point *p);
+
 void free_tree(tree_kd *t);

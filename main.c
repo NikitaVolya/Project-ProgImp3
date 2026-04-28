@@ -16,7 +16,7 @@ void test_tree(PointsList *list) {
     double distance;
 
     tree = empty_tree();
-    find_point = create_point(0, create_vector_with_values(3, 0.199382f, 0.544986f, 0.461983f));
+    find_point = create_point(0, create_vector_with_values(2, 0.199382f, 0.544986f));
 
     for (i = 0; i < points_list_get_count(list); i++) {
         point = points_list_get_point(list, i);
@@ -57,7 +57,7 @@ void test_list(PointsList *list) {
 
     printf("\n\n\n");
 
-    target = create_point(0, create_vector_with_values(3, 0.5f, 0.5f, 0.5f));
+    target = create_point(0, create_vector_with_values(2, 0.5f, 0.5f));
 
     for (i = 0; i < points_list_get_count(list); i++) {
         point = points_list_get_point(list, i);
@@ -75,8 +75,8 @@ int main(int argc,char ** argv){
     FILE *file;
     PointsList *list = NULL;
 
-    int k,test;
-    k = 10 ;
+    int test;
+
     if (argc !=2 ){
         usage(argv[0]);
         exit(EXIT_FAILURE);
@@ -95,13 +95,9 @@ int main(int argc,char ** argv){
 
     fclose(file);
 
-    
-    test_tree(list);
+    test = interface_lancer(list);
 
-    test_list(list);
-
-    test = interface_lancer(list,argv[1]);
-
+    printf("%d",test);
 
     free_points_list(list);
     exit(EXIT_SUCCESS);

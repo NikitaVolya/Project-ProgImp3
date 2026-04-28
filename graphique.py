@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import sys
 
 type_value1 = ""
 type_value2 = ""
@@ -7,7 +8,7 @@ values1 = []
 values2 = []
 
 
-with open("data_time.txt") as f:
+with open(sys.argv[1]) as f:
   header = f.readline().split()
   type_value1, type_value2 = header[0], header[1]
 
@@ -25,4 +26,4 @@ plt.xlabel(type_value1)
 plt.ylabel(type_value2)
 plt.plot(values1, values2)
 
-plt.savefig('graphique.png', dpi=300)
+plt.savefig(sys.argv[2], dpi=300)
