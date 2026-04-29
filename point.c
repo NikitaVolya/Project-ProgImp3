@@ -1,10 +1,5 @@
 #include"point.h"
 
-/**
- * @brief Checks if point is NULL and terminates program if true.
- * @param[in] fname Function name (for error message).
- * @param[in] point Pointer to point.
- */
 void check_point_on_null(const char *fname, Point *point) {
     if (point == NULL) {
         fprintf(stderr, "%s interrupted\nPoint is NULL\n", fname);

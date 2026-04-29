@@ -27,6 +27,13 @@ typedef struct {
 } Point;
 
 /**
+ * @brief Checks if point is NULL and terminates program if true.
+ * @param[in] fname Function name (for error message).
+ * @param[in] point Pointer to point.
+ */
+void check_point_on_null(const char *fname, Point *point);
+
+/**
  * @brief Creates a point with given class and position.
  * @warning The position vector is not copied; the pointer is stored directly.
  * @param[in] classe Class label of the point.
@@ -57,6 +64,18 @@ int get_point_classe(Point *point);
  */
 float get_point_position(Point *point, size_t dimension);
 
+/**
+ * @brief Returns pointer to the position vector of the point.
+ *
+ * Provides direct access to the internal vector representing
+ * the coordinates of the point.
+ *
+ * @warning The returned pointer is not a copy. Modifying the vector
+ * will affect the original point.
+ *
+ * @param[in] point Target point.
+ * @return Pointer to the position vector.
+ */
 Vector* get_point_vector(Point *point);
 
 /**
