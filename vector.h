@@ -171,6 +171,14 @@ Vector* mult_vector(Vector *vector, float value);
 
 int check_vector_eq(Vector *a, Vector *b);
 
+int check_vector_lt(Vector *a, Vector *b);
+
+int check_vector_gt(Vector *a, Vector *b);
+
+int check_vector_le(Vector *a, Vector *b);
+
+int check_vector_ge(Vector *a, Vector *b);
+
 /**
  * @brief Prints vector to specified file.
  * @param[in] file Output file stream.

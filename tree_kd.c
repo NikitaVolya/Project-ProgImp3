@@ -1,8 +1,8 @@
 #include "tree_kd.h"
 #include "point.h"
 #include <stddef.h>
-#include<stdlib.h>
-#include<stdio.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 int is_empty_tree(tree_kd * t){
     int retour = 0 ;
@@ -23,6 +23,33 @@ tree_kd * create_tree(Vector * V,int classe){
     t->left = empty_tree();
     t->right = empty_tree();
     return t;
+}
+
+tree_kd* list_to_tree(PointsList* list) {
+    size_t i;
+    tree_kd *tree;
+    Point *point;
+
+    tree = empty_tree();
+
+    for (i = 0; i < points_list_get_count(list); i++) {
+        point = points_list_get_point(list, i);
+
+        if (is_empty_tree(tree)) {
+            tree = create_tree(
+                get_point_vector(point),
+                get_point_classe(point)
+            );
+        } else {
+            add_tree(
+                tree,
+                get_point_vector(point),
+                get_point_classe(point)
+            );
+        }
+    }
+
+    return tree;
 }
 
 void add_tree(tree_kd * t,Vector * v,int classe){
@@ -71,78 +98,34 @@ void print_tree(tree_kd *t, size_t tab) {
     }
 }
 
-Vector* nearby_area_point(tree_kd *t, Point *p) {
-    Vector *res, *cur_p, *p_v;
-    tree_kd *current;
-    size_t index;
-    double dist, cur_dist;
-
-    current = t;
-    index = 0;
-
-    res = NULL;
-    dist = 0;
+Point* nearby_zone_point(Zone *zone, Point *p) {
+    Vector *res, *p_v;
+    size_t dimensions, i;
+    float x, x_min, x_max;
 
     p_v = get_point_vector(p);
+    dimensions = get_vector_dimensions(p_v);
+    res = create_vector(dimensions);
 
-    print_tree(t, 0);
-
-    while (current != NULL) {
-        cur_p = get_point_vector(current->P);
-
-        printf("iteration: ");
-        printf("dist %f | best %f  =", cur_dist, dist);
-        print_vector(cur_p);
-
-        cur_dist = get_distance(cur_p, p_v);
-        if (res == NULL || cur_dist < dist) {
-            dist = cur_dist;
-            res = cur_p;
-        }
-
-        if (get_vector_value(p_v, index) < get_vector_value(cur_p, index)) {
-            current = current->left;
-        } else {
-            current = current->right;
-        }
-
-        index = (index + 1) % get_vector_dimensions(cur_p);
+    for (i = 0; i < dimensions; i++) {
+        x = get_vector_value(p_v, i);
+        x_min = get_vector_value(zone->p_min, i);
+        x_max = get_vector_value(zone->p_max, i);
+        if (x < x_min)
+            set_vector_value(res, i, x_min);
+        else if (x > x_max)
+            set_vector_value(res, i, x_max);
+        else
+            set_vector_value(res, i, x);
     }
 
-    return res;
+    return create_point(0, res);
 }
 
-int find_point_in_area(tree_kd *t, Point *p) {
 
-    Vector *cur_p, *p_v;
-    tree_kd *current;
-    size_t index;
-    int res = 0;
-
-    current = t;
-    index = 0;
-
-    p_v = get_point_vector(p);
-
-    print_tree(t, 0);
-
-    while (current != NULL && res == 0) {
-        cur_p = get_point_vector(current->P);
-
-        if (check_vector_eq(cur_p, p_v)) {
-            res = 1;
-        } else {
-            if (get_vector_value(p_v, index) < get_vector_value(cur_p, index)) {
-                current = current->left;
-            } else {
-                current = current->right;
-            }
-        }
-
-        index = (index + 1) % get_vector_dimensions(cur_p);
-    }
-
-    return res;
+int check_point_in_zone(Zone *zone, Point *p) {
+    return check_vector_ge(zone->p_min, get_point_vector(p)) &&
+           check_vector_le(zone->p_max, get_point_vector(p));
 }
 
 void free_tree(tree_kd * t){
@@ -151,4 +134,155 @@ void free_tree(tree_kd * t){
         free_tree(t->right);
         free_point(t->P);
     }
+}
+
+Zone* create_zone(tree_kd *tree, Vector *lt, Vector *rd, size_t dimension) {
+    Zone *res;
+
+    if ((res = (Zone*) malloc(sizeof(Zone))) == NULL) {
+        fprintf(stderr, "Error while memory allocation");
+        exit(EXIT_FAILURE);
+    }
+
+    res->p_min = lt;
+    res->p_max = rd;
+    res->dimension = dimension;
+    res->tree = tree;
+    
+    return res;
+}
+
+Zone* create_base_zone(tree_kd *tree) {
+    size_t dimensions, i;
+    Vector *p_min, *p_max;
+
+    if (tree == NULL) {
+        fprintf(stderr, "Error in create_base_zone. tree is NULL\n");
+        exit(EXIT_FAILURE);
+    }
+
+    dimensions = get_point_dimensions(tree->P);
+    p_min = create_vector(dimensions);
+    p_max = create_vector(dimensions);
+
+    for (i = 0; i < dimensions; i++) {
+        set_vector_value(p_min, i, -1.f);
+        set_vector_value(p_max, i, 1.f);
+    }
+
+    return create_zone(tree, p_min,p_max, 0);
+}
+
+Zone* get_left_zone(Zone *zone) {
+    size_t next_dim, dimensions;
+    Vector *new_p_min, *new_p_max;
+
+    if (zone->tree->left == NULL)
+        return NULL;
+
+    dimensions = get_point_dimensions(zone->tree->P);
+
+    next_dim = (zone->dimension + 1) % dimensions;
+    new_p_min = create_vector_copy(zone->p_min);
+    new_p_max = create_vector_copy(zone->p_max);
+
+    set_vector_value(new_p_max, zone->dimension, get_point_position(zone->tree->P, zone->dimension));
+
+    return create_zone(zone->tree->left, new_p_min, new_p_max, next_dim);
+}
+
+Zone* get_right_zone(Zone *zone) {
+    size_t next_dim, dimensions;
+    Vector *new_p_min, *new_p_max;
+    
+    if (zone->tree->right == NULL)
+        return NULL;
+
+    dimensions = get_point_dimensions(zone->tree->P);
+
+    next_dim = (zone->dimension + 1) % dimensions;
+    new_p_min = create_vector_copy(zone->p_min);
+    new_p_max = create_vector_copy(zone->p_max);
+
+    set_vector_value(new_p_min, zone->dimension, get_point_position(zone->tree->P, zone->dimension));
+
+    return create_zone(zone->tree->right, new_p_min, new_p_max, next_dim);
+}
+
+void tree_select_k_nearby_rec(Zone *zone, OrderedPoinstList *list, Point *target) {
+    Zone *left, *right, *first, *second;
+    Point *p, *left_p, *right_p;
+
+    if (zone == NULL)
+        return;
+
+    left = get_left_zone(zone);
+    right = get_right_zone(zone);
+
+    p = zone->tree->P;
+
+    printf("Iterate: %f <=> ", get_distance_to_point(p, target));
+    print_point(p);
+    
+    ordered_points_list_add_point(list, p, target);
+
+    if (left == NULL) {
+        first = right;
+        second = left;
+    } else if (right == NULL) {
+        first = left;
+        second = right;
+    } else if (check_point_in_zone(left, target)) {
+        first = left;
+        second = right;
+    } else if (check_point_in_zone(right, target)) {
+        first = right;
+        second = left;
+    } else{
+        left_p = nearby_zone_point(left, target);
+        right_p = nearby_zone_point(right, target);
+
+        if (get_distance_to_point(target, left_p) < get_distance_to_point(target, right_p)) {
+            first = left;
+            second = right;
+        } else {
+            first = right;
+            second = left;
+        }
+    }
+
+    tree_select_k_nearby_rec(first, list, target);
+
+    
+    if (second != NULL) {
+        left_p = ((PointDistance*) get_ordered_points_first_point(list))->point;
+        right_p = nearby_zone_point(second, target);
+        
+        
+        if (get_distance_to_point(right_p, target) <= get_distance_to_point(left_p, target)) {
+            tree_select_k_nearby_rec(second, list, target);
+        }
+    }
+}
+
+Stack* tree_select_k_nearby(tree_kd *tree, Point *target, int k) {
+    Stack *res;
+    Zone *base_zone;
+    OrderedPoinstList *list;
+
+    base_zone = create_base_zone(tree);
+    list = create_ordered_point_list(k);
+    
+    tree_select_k_nearby_rec(base_zone, list, target);
+
+    res = extract_points(list);
+    free_ordered_points_list(list);
+
+    return res;
+}
+
+void free_zone(Zone *zone) {
+    free_point(zone->p_min);
+    free_point(zone->p_max);
+    free_point(zone);
 }

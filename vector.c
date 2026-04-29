@@ -337,6 +337,61 @@ int check_vector_eq(Vector *a, Vector *b) {
     return res;
 }
 
+int check_vector_lt(Vector *a, Vector *b) {
+    int res;
+    size_t i;
+    
+    /* check input data */
+    check_on_null("check_vector_lt", a);
+    check_on_null("check_vector_lt", b);
+    check_on_dimensions("check_vector_lt", a, b);
+
+    res = 1;
+    for (i = 0; i < a->dimensions && res == 1; i++) {
+        if (a->values[i] > b->values[i])
+            res = 0;
+    }
+
+    return res;
+}
+
+int check_vector_gt(Vector *a, Vector *b) {
+    int res;
+    size_t i;
+    
+    /* check input data */
+    check_on_null("check_vector_gt", a);
+    check_on_null("check_vector_gt", b);
+    check_on_dimensions("check_vector_gt", a, b);
+
+    res = 1;
+    for (i = 0; i < a->dimensions && res == 1; i++) {
+        if (a->values[i] < b->values[i])
+            res = 0;
+    }
+
+    return res;
+}
+
+int check_vector_le(Vector *a, Vector *b) {
+    /* check input data */
+    check_on_null("check_vector_le", a);
+    check_on_null("check_vector_le", b);
+    check_on_dimensions("check_vector_le", a, b);
+
+    return check_vector_lt(a, b) || check_vector_eq(a, b);
+}
+
+int check_vector_ge(Vector *a, Vector *b) {
+    /* check input data */
+    check_on_null("check_vector_ge", a);
+    check_on_null("check_vector_ge", b);
+    check_on_dimensions("check_vector_ge", a, b);
+
+    return check_vector_gt(a, b) || check_vector_eq(a, b);
+}
+
+
 void fprint_vector(FILE *file, Vector *vector) {
     size_t i;
 

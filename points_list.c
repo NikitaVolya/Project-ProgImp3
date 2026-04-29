@@ -12,6 +12,73 @@ PointDistance* create_point_distatnce(Point* target, Point *point) {
     return res;
 }
 
+OrderedPoinstList* create_ordered_point_list(size_t maxsize) {
+    OrderedPoinstList* res;
+
+    if ((res = (OrderedPoinstList*) malloc(sizeof(OrderedPoinstList))) == NULL) {
+        return NULL;
+    }
+    res->maxsize = maxsize;
+    res->best_stack = create_stack();
+    res->tmp_stack = create_stack();
+
+    return res;
+}
+
+void free_ordered_points_list(OrderedPoinstList* list) {
+    free_stack(list->best_stack);
+    free_stack(list->tmp_stack);
+    free(list);
+}
+
+OrderedPoinstList* ordered_points_list_add_point(OrderedPoinstList* list, Point *point, Point *target) {
+    PointDistance *pointDist;
+    
+    pointDist = create_point_distatnce(point, target);
+
+    /* transfer all points with grater distance than point to tmp_stack from best_stack */
+    while (!stack_is_empty(list->best_stack) && 
+        ((PointDistance*) stack_value(list->best_stack))->distance > pointDist->distance) {
+        stack_push(list->tmp_stack, stack_pop(list->best_stack));
+    }
+
+    /* add point to best_stack if enough place */
+    if (get_stack_size(list->best_stack) < list->maxsize) {
+        stack_push(list->best_stack, pointDist);
+    }
+
+    /* add points from tmp_stack to best_stack if enough place */
+    while (!stack_is_empty(list->tmp_stack) && 
+            get_stack_size(list->best_stack) < list->maxsize) {
+        stack_push(list->best_stack, stack_pop(list->tmp_stack));
+    }
+
+    /* clear tmp_stack */
+    stack_clear(list->tmp_stack);
+
+    return list;
+}
+
+Stack* extract_points(OrderedPoinstList *list) {
+    Stack *res;
+
+    res = list->best_stack;
+    list->best_stack = create_stack();
+
+    return res;
+}
+
+Stack* get_points(OrderedPoinstList *list) {
+    return list->best_stack;
+}
+
+Point* get_ordered_points_first_point(OrderedPoinstList* list) {
+    if (stack_is_empty(list->best_stack))
+        return NULL;
+    else
+        return stack_value(list->best_stack);
+}
+
 PointsList* create_points_list(size_t start_capacity, int nb_classes, int dimensions) {
     PointsList *res;
 
@@ -52,7 +119,6 @@ void points_list_add_point(PointsList *list, Point *point) {
     list->count++;
 }
 
-
 void points_list_remove_point(PointsList *list, size_t index) {
     Point *tmp;
 
@@ -78,6 +144,14 @@ Point* points_list_get_point(PointsList *list, size_t index) {
         exit(EXIT_FAILURE);
     }
     return list->points[index];
+}
+
+void points_list_set_point(PointsList *list, size_t index, Point *p) {
+    if (list->count <= index) {
+        fprintf(stderr, "Error points_list_set_point. Index out of range\n");
+        exit(EXIT_FAILURE);
+    }
+    list->points[index] = p;
 }
 
 size_t points_list_get_count(PointsList *list) {
@@ -109,48 +183,27 @@ void free_points_list(PointsList *list) {
 }
 
 Stack* point_list_select_k_nearby(PointsList *list, Point *target, int k) {
-    Stack *best_stack, *tmp_stack;
-    PointDistance *point;
+    Stack *res;
+    OrderedPoinstList *order_list;
     size_t i;
     
     if (k < 1 || list == NULL || target == NULL)
         return NULL;
 
-    best_stack = create_stack();
-    tmp_stack = create_stack();
+    order_list = create_ordered_point_list(k);
 
     for (i = 0; i < list->count; i++) {
-        /* selecting point and find distance from target */
-        point = create_point_distatnce(list->points[i], target);
-
-        /* transfer all points with grater distance than point to tmp_stack from best_stack */
-        while (!stack_is_empty(best_stack) && 
-              ((PointDistance*) stack_value(best_stack))->distance > point->distance) {
-            stack_push(tmp_stack, stack_pop(best_stack));
-        }
-
-        /* add point to best_stack if enough place */
-        if (get_stack_size(best_stack) < (size_t) k) {
-            stack_push(best_stack, point);
-        }
-
-        /* add points from tmp_stack to best_stack if enough place */
-        while (!stack_is_empty(tmp_stack) && get_stack_size(best_stack) < (size_t) k) {
-            stack_push(best_stack, stack_pop(tmp_stack));
-        }
-
-        /* clear tmp_stack */
-        stack_clear(tmp_stack);
+        ordered_points_list_add_point(order_list, list->points[i], target);
     }
 
-    /* free memory */
-    free_stack(tmp_stack);
+    res = extract_points(order_list);
+    free_ordered_points_list(order_list);
 
-    return best_stack;  
+    return res;  
 }
 
 int select_class_bf(PointsList *list, Point *target, int k) {
-    Stack *best_stack, *tmp_stack;
+    Stack *best_stack;
     PointDistance *tmp_point;
     short *classes_count;
     int best_class, best_count, tmp_class;
@@ -164,7 +217,6 @@ int select_class_bf(PointsList *list, Point *target, int k) {
     }
 
     best_stack = point_list_select_k_nearby(list, target, k);
-    tmp_stack = create_stack();
     
     best_class = 0;
     best_count = 0;
@@ -174,7 +226,6 @@ int select_class_bf(PointsList *list, Point *target, int k) {
     /* counting points and chosing best class */
     while (!stack_is_empty(best_stack)) {
         tmp_point = stack_pop(best_stack);
-        printf("%f <=> ", tmp_point->distance);
         print_point(tmp_point->point);
 
         tmp_class = get_point_classe(tmp_point->point);
@@ -189,7 +240,6 @@ int select_class_bf(PointsList *list, Point *target, int k) {
 
     /* free memory */
     free_stack(best_stack);
-    free_stack(tmp_stack);
     free(classes_count);
 
     set_point_classe(target, best_class);
