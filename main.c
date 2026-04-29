@@ -10,51 +10,23 @@ void usage(char * m) {
 }
 
 void test_tree(PointsList *list) {
-    Stack *neibors;
-    tree_kd *tree;
     Point *find_point;
-    PointDistance *tmp_point;
 
-    find_point = create_point(0, create_vector_with_values(2, -0.8f, 0.0f));
+    find_point = create_point(0, create_vector_zero(list->dimensions));
 
-    tree = list_to_tree(list);
-
-    if (is_empty_tree(tree))
-        return;
-
-    print_tree(tree);
-
-    neibors = tree_select_k_nearby(tree, find_point, 4);
-
-    while (!stack_is_empty(neibors)) {
-        tmp_point = stack_pop(neibors);
-        printf("%f <=> ", get_distance_to_point(tmp_point->point, find_point));
-        print_point(tmp_point->point);
-        free(tmp_point);
-    }
+    select_tree_class(list, find_point, 4);
     
-    free_tree(tree);
     free_point(find_point);
 }
 
 void test_list(PointsList *list) {
-    size_t i;
-    Stack *res;
     Point *point, *target;
     double distance;
+    size_t i;
 
     printf("\n\n\n");
 
-    target = create_point(0, create_vector_with_values(2, -0.8f, 0.0f));
-
-    for (i = 0; i < points_list_get_count(list); i++) {
-        point = points_list_get_point(list, i);
-
-        distance = get_distance(get_point_vector(point), target->position);
-
-        printf("%f <=>", distance);
-        print_point(point);
-    }
+    target = create_point(0, create_vector_zero(list->dimensions));
 
     select_class_bf(list, target, 4);
 }
@@ -86,17 +58,6 @@ int main(int argc,char ** argv){
     test_tree(list);
 
     test_list(list);
-
-    /*
-
-    test = interface_lancer();
-
-    new = create_point(0, create_vector_zero(2));
-    printf("Class %d\n", select_class_bf(list, new,k));
-
-    
-    printf("%d\n",test);
-    */
 
     free_points_list(list);
     exit(EXIT_SUCCESS);

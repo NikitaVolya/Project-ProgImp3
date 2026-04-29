@@ -1,92 +1,24 @@
 #include "points_list.h"
 
-
-PointDistance* create_point_distatnce(Point* target, Point *point) {
-    PointDistance* res;
-
-    if ((res = (PointDistance*) malloc(sizeof(PointDistance))) == NULL) {
-        return NULL;
+void check_point_list_on_null(const char *fname, PointsList *list) {
+    if (list == NULL) {
+        fprintf(stderr, "%s interrupted\nPointsList is NULL\n", fname);
+        exit(EXIT_FAILURE);
     }
-    res->point = target;
-    res->distance = get_distance_to_point(target, point);
-    return res;
 }
 
-OrderedPoinstList* create_ordered_point_list(size_t maxsize) {
-    OrderedPoinstList* res;
-
-    if ((res = (OrderedPoinstList*) malloc(sizeof(OrderedPoinstList))) == NULL) {
-        return NULL;
-    }
-    res->maxsize = maxsize;
-    res->best_stack = create_stack();
-    res->tmp_stack = create_stack();
-
-    return res;
-}
-
-void free_ordered_points_list(OrderedPoinstList* list) {
-    free_stack(list->best_stack);
-    free_stack(list->tmp_stack);
-    free(list);
-}
-
-OrderedPoinstList* ordered_points_list_add_point(OrderedPoinstList* list, Point *point, Point *target) {
-    PointDistance *pointDist;
-    
-    pointDist = create_point_distatnce(point, target);
-
-    /* transfer all points with grater distance than point to tmp_stack from best_stack */
-    while (!stack_is_empty(list->best_stack) && 
-        ((PointDistance*) stack_value(list->best_stack))->distance > pointDist->distance) {
-        stack_push(list->tmp_stack, stack_pop(list->best_stack));
-    }
-
-    /* add point to best_stack if enough place */
-    if (get_stack_size(list->best_stack) < list->maxsize) {
-        stack_push(list->best_stack, pointDist);
-    }
-
-    /* add points from tmp_stack to best_stack if enough place */
-    while (!stack_is_empty(list->tmp_stack) && 
-            get_stack_size(list->best_stack) < list->maxsize) {
-        stack_push(list->best_stack, stack_pop(list->tmp_stack));
-    }
-
-    /* clear tmp_stack */
-    stack_clear(list->tmp_stack);
-
-    return list;
-}
-
-Stack* extract_points(OrderedPoinstList *list) {
-    Stack *res;
-
-    res = list->best_stack;
-    list->best_stack = create_stack();
-
-    return res;
-}
-
-Stack* get_points(OrderedPoinstList *list) {
-    return list->best_stack;
-}
-
-Point* get_ordered_points_first_point(OrderedPoinstList* list) {
-    if (stack_is_empty(list->best_stack))
-        return NULL;
-    else
-        return stack_value(list->best_stack);
-}
 
 PointsList* create_points_list(size_t start_capacity, int nb_classes, int dimensions) {
     PointsList *res;
 
-    if ((res = (PointsList*) malloc(sizeof(PointsList))) == NULL ||
-        (res->points = (Point**) malloc(sizeof(Point*) * start_capacity)) == NULL) {
+    if ((res = (PointsList*) malloc(sizeof(PointsList))) == NULL) {
         fprintf(stderr, "Error while memory allocation\n");
-        if (res != NULL) 
-            free(res);
+        return NULL;
+    }
+
+    if ((res->points = (Point**) malloc(sizeof(Point*) * start_capacity)) == NULL) {
+        fprintf(stderr, "Error while memory allocation\n");
+        free(res);
         return NULL;
     }
 
@@ -100,19 +32,20 @@ PointsList* create_points_list(size_t start_capacity, int nb_classes, int dimens
 
 
 void points_list_add_point(PointsList *list, Point *point) {
+    Point **tmp;
 
-    if (list == NULL) {
-        fprintf(stderr, "list is NULL\n");
-        exit(EXIT_FAILURE);
-    }
-    if (point == NULL) {
-        fprintf(stderr, "point is NULL\n");
-        exit(EXIT_FAILURE);
-    }
+    check_point_list_on_null("points_list_add_point", list);
+    check_point_on_null("points_list_add_point", point);
 
     if (list->count == list->capacity) {
         list->capacity = list->capacity * 2 + 1;
-        list->points = realloc(list->points, sizeof(Point*) * list->capacity);
+
+        Point **tmp = (Point **) realloc(list->points, sizeof(Point*) * list->capacity);
+        if (tmp == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(EXIT_FAILURE);
+        }
+        list->points = tmp;
     }
 
     list->points[list->count] = point;
@@ -122,12 +55,13 @@ void points_list_add_point(PointsList *list, Point *point) {
 void points_list_remove_point(PointsList *list, size_t index) {
     Point *tmp;
 
+    check_point_list_on_null("points_list_remove_point", list);
+
     if (list->count <= index) {
         fprintf(stderr, "Error points_list_remove_point. Index out of range\n");
         exit(EXIT_FAILURE);
     }
 
-    
     tmp = list->points[index];
 
     if (list->count != 1) {
@@ -139,6 +73,9 @@ void points_list_remove_point(PointsList *list, size_t index) {
 } 
 
 Point* points_list_get_point(PointsList *list, size_t index) {
+
+    check_point_list_on_null("points_list_get_point", list);
+
     if (list->count <= index) {
         fprintf(stderr, "Error points_list_get_point. Index out of range\n");
         exit(EXIT_FAILURE);
@@ -147,14 +84,23 @@ Point* points_list_get_point(PointsList *list, size_t index) {
 }
 
 void points_list_set_point(PointsList *list, size_t index, Point *p) {
+    
+    check_point_list_on_null("points_list_set_point", list);
+
     if (list->count <= index) {
         fprintf(stderr, "Error points_list_set_point. Index out of range\n");
         exit(EXIT_FAILURE);
     }
+
+    free_point(list->points[index]);
+
     list->points[index] = p;
 }
 
 size_t points_list_get_count(PointsList *list) {
+
+    check_point_list_on_null("points_list_get_count", list);
+
     if (list == NULL)
         return 0;
     return list->count;
@@ -163,9 +109,13 @@ size_t points_list_get_count(PointsList *list) {
 void fprint_points_list(FILE *file, PointsList *list) {
     size_t i;
 
-    fprintf(file, "Points list: [%ld %d %d]\n", list->count, list->nb_classes, list->dimensions);
-    for (i = 0; i < list->count; i++)
-        fprint_point(file, list->points[i]);
+    if (list != NULL) {
+        fprintf(file, "Points list: [%ld %d %d]\n", list->count, list->nb_classes, list->dimensions);
+        for (i = 0; i < list->count; i++)
+            fprint_point(file, list->points[i]);
+    } else {
+        fprintf(file, "Points List is NULL\n");
+    }
 }
 
 void print_points_list(PointsList *list) {
@@ -182,9 +132,56 @@ void free_points_list(PointsList *list) {
     free(list);
 }
 
+int extract_majority_class_from_stack(Stack *stack, int nb_classes) {
+    int *classes_count;
+    int best_class, best_count, tmp_class;
+    PointDistance *tmp_point;
+
+    if (nb_classes < 1 || stack == NULL) {
+        free_stack(stack);
+        return -1;
+    }
+
+    if ((classes_count = (int*) calloc(nb_classes, sizeof(int))) == NULL) {
+        fprintf(stderr, "Error while memory allocation");
+        return -1;
+    }
+
+    best_class = 0;
+    best_count = 0;
+
+    /* counting points and chosing best class */
+    printf("============== NEIGHBORS ==============\n");
+    while (!stack_is_empty(stack)) {
+        tmp_point = stack_pop(stack);
+
+        print_point(tmp_point->point);
+
+
+        tmp_class = get_point_classe(tmp_point->point);
+
+        
+        if (tmp_class > 0 && tmp_class <= nb_classes) {
+            classes_count[tmp_class - 1]++;
+
+            if (classes_count[tmp_class - 1] >= best_count) {
+                best_class = tmp_class;
+                best_count = classes_count[tmp_class - 1];
+            }
+        }
+
+        free(tmp_point);
+    }
+
+    /* free memory */
+    free(classes_count);
+
+    return best_class;  
+}
+
 Stack* point_list_select_k_nearby(PointsList *list, Point *target, int k) {
     Stack *res;
-    OrderedPoinstList *order_list;
+    OrderedPointsList *order_list;
     size_t i;
     
     if (k < 1 || list == NULL || target == NULL)
@@ -204,45 +201,16 @@ Stack* point_list_select_k_nearby(PointsList *list, Point *target, int k) {
 
 int select_class_bf(PointsList *list, Point *target, int k) {
     Stack *best_stack;
-    PointDistance *tmp_point;
-    short *classes_count;
-    int best_class, best_count, tmp_class;
+    int best_class;
 
     if (k < 1 || list == NULL || target == NULL)
         return -1;
 
-    if ((classes_count = (short*) calloc(list->nb_classes, sizeof(short))) == NULL) {
-        fprintf(stderr, "Error while memory allocation");
-        return -1;
-    }
-
     best_stack = point_list_select_k_nearby(list, target, k);
-    
-    best_class = 0;
-    best_count = 0;
+    best_class = extract_majority_class_from_stack(best_stack, list->nb_classes);
 
-    printf("================= NEIBORS ======================\n");
-
-    /* counting points and chosing best class */
-    while (!stack_is_empty(best_stack)) {
-        tmp_point = stack_pop(best_stack);
-        print_point(tmp_point->point);
-
-        tmp_class = get_point_classe(tmp_point->point);
-        classes_count[tmp_class - 1]++;
-
-        if (classes_count[tmp_class - 1] >= best_count) {
-            best_class = tmp_class;
-            best_count = classes_count[tmp_class - 1];
-        }
-        free(tmp_point);
-    }
-
-    /* free memory */
     free_stack(best_stack);
-    free(classes_count);
-
-    set_point_classe(target, best_class);
+    set_point_classe(target, k);
 
     return best_class;  
 }
