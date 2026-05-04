@@ -422,8 +422,29 @@ static void dessiner_point(Point * P,int classe) {
     x = ZONE_X + get_point_position(P, 0) * 250 + 255 ;
     y = ZONE_Y + get_point_position(P, 1) * 250 + 255 ;
 
-    // Utilise 'classe' pour la couleur, mais la classe réelle du point P pour le symbole
-    MLV_draw_text(x, y, "%c", classe_color(classe), classe_symbole(get_point_classe(P)));
+    if (classe == CLASSE_VOISIN_SELECTIONNE) {
+        /* Voisin KPP selectionne : couleur speciale pour qu'il ressorte clairement. */
+        MLV_draw_filled_circle(x + 4, y + 5, 13, MLV_COLOR_GRAY);
+        MLV_draw_filled_circle(x, y, 13, MLV_COLOR_YELLOW);
+        MLV_draw_circle(x, y, 13, MLV_COLOR_ORANGE);
+        MLV_draw_circle(x, y, 11, MLV_COLOR_ORANGE);
+        MLV_draw_circle(x, y, 9, MLV_COLOR_BLACK);
+        MLV_draw_text(x - 4, y - 7, "%c", MLV_COLOR_BLACK, classe_symbole(get_point_classe(P)));
+        return;
+    }
+
+    c = classe_color(classe);
+    symbole = MLV_COLOR_WHITE;
+    if (classe == 3 || classe == 10) {
+        symbole = MLV_COLOR_BLACK;
+    }
+
+    /* Points normaux : remplissage colore au lieu d'un simple contour. */
+    MLV_draw_filled_circle(x + 3, y + 4, 10, MLV_COLOR_GRAY);
+    MLV_draw_filled_circle(x, y, 10, c);
+    MLV_draw_circle(x, y, 10, MLV_COLOR_BLACK);
+    MLV_draw_circle(x, y, 8, MLV_COLOR_WHITE);
+    MLV_draw_text(x - 4, y - 7, "%c", symbole, classe_symbole(get_point_classe(P)));
 }
 
 static void dessiner_bouton(int x, int y, int largeur, int hauteur, const char *texte) {
