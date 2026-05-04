@@ -391,27 +391,21 @@ static void dessiner_zone_affichage(PointsList * list, Point * point_selectionne
 }
 
 static void dessiner_options_affichage(int * option_voisinage, int * option_descision) {
-    MLV_draw_filled_rectangle(ZONE_OPTIONS_X, ZONE_OPTIONS_Y, ZONE_OPTIONS_LARGEUR, ZONE_OPTIONS_HAUTEUR, COULEUR_PANNEAU);
+    MLV_draw_filled_rectangle(ZONE_OPTIONS_X + 8, ZONE_OPTIONS_Y + 10, ZONE_OPTIONS_LARGEUR, ZONE_OPTIONS_HAUTEUR, COULEUR_OMBRE);
+    MLV_draw_filled_rectangle(ZONE_OPTIONS_X - 3, ZONE_OPTIONS_Y - 3, ZONE_OPTIONS_LARGEUR + 6, ZONE_OPTIONS_HAUTEUR + 6, MLV_COLOR_PINK);
+    MLV_draw_filled_rectangle(ZONE_OPTIONS_X, ZONE_OPTIONS_Y, ZONE_OPTIONS_LARGEUR, ZONE_OPTIONS_HAUTEUR, COULEUR_SURFACE);
     MLV_draw_rectangle(ZONE_OPTIONS_X, ZONE_OPTIONS_Y, ZONE_OPTIONS_LARGEUR, ZONE_OPTIONS_HAUTEUR, COULEUR_BORDURE);
+    MLV_draw_rectangle(ZONE_OPTIONS_X + 4, ZONE_OPTIONS_Y + 4, ZONE_OPTIONS_LARGEUR - 8, ZONE_OPTIONS_HAUTEUR - 8, COULEUR_PANNEAU);
 
+    dessiner_petit_coeur(ZONE_OPTIONS_X + 24, ZONE_OPTIONS_Y + 22, COULEUR_PANNEAU);
     MLV_draw_text(ZONE_OPTIONS_X + 45, ZONE_OPTIONS_Y + 15, "Options d'affichage", COULEUR_TEXTE);
+    MLV_draw_line(ZONE_OPTIONS_X + 18, ZONE_OPTIONS_Y + 36, ZONE_OPTIONS_X + ZONE_OPTIONS_LARGEUR - 18, ZONE_OPTIONS_Y + 36, COULEUR_PANNEAU);
 
-    if (*option_voisinage == 0) {
-        MLV_draw_rectangle(ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 45, 15, 15, COULEUR_BORDURE);
-    }
-    else {
-        MLV_draw_filled_rectangle(ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 45, 15, 15, COULEUR_BORDURE);
-    }
+    dessiner_checkbox(ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 48, *option_voisinage);
+    MLV_draw_text(ZONE_OPTIONS_X + 42, ZONE_OPTIONS_Y + 46, "voisinage", COULEUR_TEXTE);
 
-    MLV_draw_text(ZONE_OPTIONS_X + 40, ZONE_OPTIONS_Y + 42, "voisinage", COULEUR_TEXTE);
-    if (*option_descision == 0) {
-        MLV_draw_rectangle(ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 75, 15, 15, COULEUR_BORDURE);
-    }
-    else {
-        MLV_draw_filled_rectangle(ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 75, 15, 15, COULEUR_BORDURE);
-    }
-
-    MLV_draw_text(ZONE_OPTIONS_X + 40, ZONE_OPTIONS_Y + 72, "prise de decision", COULEUR_TEXTE);
+    dessiner_checkbox(ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 80, *option_descision);
+    MLV_draw_text(ZONE_OPTIONS_X + 42, ZONE_OPTIONS_Y + 78, "prise de decision", COULEUR_TEXTE);
 }
 
 static void dessiner_point(Point * P,int classe) {
