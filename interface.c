@@ -523,6 +523,46 @@ static char classe_symbole(int i) {
     return symbole;
 }
 
+static void animer_sparkle(PointsList * list, size_t classe, int mode, int k, int * option_voisinage, int * option_descision, size_t nb_classe, Point * point_selectionne, int x, int y) {
+    int i;
+    for (i = 0; i < 7; i++) {
+        dessiner_interface(list, classe, mode, k, option_voisinage, option_descision, nb_classe, point_selectionne);
+        dessiner_sparkle(x, y, i);
+        MLV_actualise_window();
+        MLV_wait_milliseconds(35);
+    }
+}
+
+static void dessiner_sparkle(int x, int y, int etape) {
+    int r;
+    int d;
+    MLV_Color c;
+
+    r = 4 + etape * 3;
+    d = 8 + etape * 4;
+    if (etape % 2 == 0) {
+        c = MLV_COLOR_YELLOW;
+    }
+    else {
+        c = MLV_COLOR_PINK;
+    }
+
+    MLV_draw_circle(x, y, r, c);
+    MLV_draw_line(x - d, y, x - d / 2, y, c);
+    MLV_draw_line(x + d / 2, y, x + d, y, c);
+    MLV_draw_line(x, y - d, x, y - d / 2, c);
+    MLV_draw_line(x, y + d / 2, x, y + d, c);
+    MLV_draw_line(x - d / 2, y - d / 2, x - d / 4, y - d / 4, c);
+    MLV_draw_line(x + d / 4, y - d / 4, x + d / 2, y - d / 2, c);
+    MLV_draw_line(x - d / 2, y + d / 2, x - d / 4, y + d / 4, c);
+    MLV_draw_line(x + d / 4, y + d / 4, x + d / 2, y + d / 2, c);
+
+    MLV_draw_filled_circle(x - d, y - d / 3, 2, MLV_COLOR_WHITE);
+    MLV_draw_filled_circle(x + d, y + d / 3, 2, MLV_COLOR_WHITE);
+    MLV_draw_filled_circle(x - d / 3, y + d, 2, MLV_COLOR_WHITE);
+    MLV_draw_filled_circle(x + d / 3, y - d, 2, MLV_COLOR_WHITE);
+}
+
 static Point* select_point(PointsList * list, int x, int y) {
     size_t i;
     Point *proche = NULL;
