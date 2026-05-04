@@ -544,7 +544,7 @@ static void dessiner_liste_voisins(PointsList * list, Point * point_selectionne,
     }
 
     if ((int)nb_voisins > max_lignes) {
-        fprintf(ligne, "+%lu autres voisins", (unsigned long)(nb_voisins - (size_t)max_lignes));
+        sprintf(ligne, "+%lu autres voisins", (unsigned long)(nb_voisins - (size_t)max_lignes));
         MLV_draw_text(ZONE_VOISINS_X + 16, ZONE_VOISINS_Y + ZONE_VOISINS_HAUTEUR - 24, ligne, COULEUR_BORDURE);
     }
 
