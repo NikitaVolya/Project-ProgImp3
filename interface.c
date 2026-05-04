@@ -432,6 +432,24 @@ static void dessiner_bouton(int x, int y, int largeur, int hauteur, const char *
     MLV_draw_text(x + 10, y + 12, texte, COULEUR_TEXTE);
 }
 
+static void dessiner_checkbox(int x, int y, int active) {
+    MLV_draw_filled_rectangle(x + 2, y + 2, 17, 17, COULEUR_OMBRE);
+    MLV_draw_filled_rectangle(x, y, 17, 17, MLV_COLOR_WHITE);
+    MLV_draw_rectangle(x, y, 17, 17, COULEUR_BORDURE);
+    if (active != 0) {
+        MLV_draw_line(x + 3, y + 9, x + 7, y + 13, COULEUR_BORDURE);
+        MLV_draw_line(x + 7, y + 13, x + 14, y + 4, COULEUR_BORDURE);
+    }
+}
+
+static void dessiner_grille_douce(void) {
+    int i;
+    for (i = 1; i < 10; i++) {
+        MLV_draw_line(ZONE_X + i * 51, ZONE_Y + 6, ZONE_X + i * 51, ZONE_Y + ZONE_HAUTEUR - 6, MLV_COLOR_GRAY);
+        MLV_draw_line(ZONE_X + 6, ZONE_Y + i * 51, ZONE_X + ZONE_LARGEUR - 6, ZONE_Y + i * 51, MLV_COLOR_GRAY);
+    }
+}
+
 static MLV_Color classe_color(int i) {
     MLV_Color color;
     if (i == 0) {
