@@ -443,25 +443,25 @@ static MLV_Color classe_color(int i) {
                 color = MLV_COLOR_BLUE;
                 break;
             case 2:
-                color = MLV_COLOR_RED;
+                color = MLV_COLOR_ORANGE;
                 break;
             case 3:
-                color = MLV_COLOR_YELLOW;
+                color = MLV_COLOR_GREEN;
                 break;
             case 4:
-                color = MLV_COLOR_GREEN;
+                color = MLV_COLOR_MAGENTA;
                 break;
             case 5:
                 color = MLV_COLOR_CYAN;
                 break;
             case 6:
-                color = MLV_COLOR_ORANGE;
+                color = MLV_COLOR_RED;
                 break;
             case 7:
                 color = MLV_COLOR_PURPLE;
                 break;
             case 8:
-                color = MLV_COLOR_MAGENTA;
+                color = MLV_COLOR_YELLOW;
                 break;
             case 9:
                 color = MLV_COLOR_BROWN;
@@ -476,7 +476,6 @@ static MLV_Color classe_color(int i) {
     }
     return color ;
 }
-
 
 static char classe_symbole(int i) {
     char symbole;
