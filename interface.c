@@ -347,9 +347,15 @@ static void dessiner_zone_affichage(PointsList * list, Point * point_selectionne
     Stack * kvoisin;
     Point ** neighbors = NULL;
     size_t neighbor_count = 0;
-
-    MLV_draw_filled_rectangle(ZONE_X, ZONE_Y, ZONE_LARGEUR, ZONE_HAUTEUR, COULEUR_PANNEAU);
+    int color_to_use;
+    size_t j;
+    
+    MLV_draw_filled_rectangle(ZONE_X + 10, ZONE_Y + 12, ZONE_LARGEUR, ZONE_HAUTEUR, COULEUR_OMBRE);
+    MLV_draw_filled_rectangle(ZONE_X - 4, ZONE_Y - 4, ZONE_LARGEUR + 8, ZONE_HAUTEUR + 8, MLV_COLOR_PINK);
+    MLV_draw_filled_rectangle(ZONE_X, ZONE_Y, ZONE_LARGEUR, ZONE_HAUTEUR, COULEUR_SURFACE);
     MLV_draw_rectangle(ZONE_X, ZONE_Y, ZONE_LARGEUR, ZONE_HAUTEUR, COULEUR_BORDURE);
+    MLV_draw_rectangle(ZONE_X + 5, ZONE_Y + 5, ZONE_LARGEUR - 10, ZONE_HAUTEUR - 10, COULEUR_PANNEAU);
+    dessiner_grille_douce();
     
     if (list != NULL) {
         // 1. Si l'option voisinage est active, on identifie les voisins d'abord
@@ -378,7 +384,7 @@ static void dessiner_zone_affichage(PointsList * list, Point * point_selectionne
                 // Vérifier si ce point est dans la liste des voisins
                 for (size_t j = 0; j < neighbor_count; j++) {
                     if (temp == neighbors[j]) {
-                        color_to_use = get_point_classe(point_selectionne);
+                        color_to_use = CLASSE_VOISIN_SELECTIONNE;
                         break;
                     }
                 }
@@ -388,6 +394,125 @@ static void dessiner_zone_affichage(PointsList * list, Point * point_selectionne
 
         if (neighbors != NULL) free(neighbors);
     }
+}
+
+static void dessiner_liste_voisins(PointsList * list, Point * point_selectionne, int k, int option_voisinage, int mode) {
+    Stack * kvoisin;
+    PointDistance * pd;
+    Point * voisin;
+    size_t nb_voisins;
+    size_t i;
+    size_t dimension;
+    size_t dimensions;
+    int y;
+    int max_lignes;
+    int ligne_y;
+    MLV_Color couleur_ligne;
+    char ligne[160];
+    char coords[96];
+    char morceau[32];
+
+    /* Liste visuelle : seulement en mode KPP + voisinage actif. */
+    if (mode != 2 || option_voisinage == 0) {
+        return;
+    }
+
+    MLV_draw_filled_rectangle(ZONE_VOISINS_X + 5, ZONE_VOISINS_Y + 6, ZONE_VOISINS_LARGEUR, ZONE_VOISINS_HAUTEUR, COULEUR_OMBRE);
+    MLV_draw_filled_rectangle(ZONE_VOISINS_X - 2, ZONE_VOISINS_Y - 2, ZONE_VOISINS_LARGEUR + 4, ZONE_VOISINS_HAUTEUR + 4, MLV_COLOR_PINK);
+    MLV_draw_filled_rectangle(ZONE_VOISINS_X, ZONE_VOISINS_Y, ZONE_VOISINS_LARGEUR, ZONE_VOISINS_HAUTEUR, COULEUR_SURFACE);
+    MLV_draw_rectangle(ZONE_VOISINS_X, ZONE_VOISINS_Y, ZONE_VOISINS_LARGEUR, ZONE_VOISINS_HAUTEUR, COULEUR_BORDURE);
+    MLV_draw_rectangle(ZONE_VOISINS_X + 4, ZONE_VOISINS_Y + 4, ZONE_VOISINS_LARGEUR - 8, ZONE_VOISINS_HAUTEUR - 8, COULEUR_PANNEAU);
+
+    MLV_draw_text(ZONE_VOISINS_X + 14, ZONE_VOISINS_Y + 14, "Voisins KPP", COULEUR_BORDURE);
+    MLV_draw_line(ZONE_VOISINS_X + 12, ZONE_VOISINS_Y + 35, ZONE_VOISINS_X + ZONE_VOISINS_LARGEUR - 12, ZONE_VOISINS_Y + 35, COULEUR_PANNEAU);
+
+    if (point_selectionne == NULL || list == NULL) {
+        MLV_draw_text(ZONE_VOISINS_X + 12, ZONE_VOISINS_Y + 52, "Clique un point", COULEUR_TEXTE);
+        MLV_draw_text(ZONE_VOISINS_X + 12, ZONE_VOISINS_Y + 70, "pour voir ses voisins", COULEUR_TEXTE);
+        return;
+    }
+
+    coords[0] = '\0';
+    dimensions = get_point_dimensions(point_selectionne);
+    for (dimension = 0; dimension < dimensions && dimension < 3; dimension++) {
+        if (dimension == 0) {
+            sprintf(morceau, "%.2f", get_point_position(point_selectionne, dimension));
+        } else {
+            sprintf(morceau, ", %.2f", get_point_position(point_selectionne, dimension));
+        }
+        if (strlen(coords) + strlen(morceau) < sizeof(coords) - 1) {
+            strcat(coords, morceau);
+        }
+    }
+    if (dimensions > 3 && strlen(coords) + 5 < sizeof(coords) - 1) {
+        strcat(coords, ", ...");
+    }
+
+    sprintf(ligne, "Point: classe %d", get_point_classe(point_selectionne));
+    MLV_draw_text(ZONE_VOISINS_X + 12, ZONE_VOISINS_Y + 52, ligne, COULEUR_TEXTE);
+    sprintf(ligne, "pos: [%s]", coords);
+    MLV_draw_text(ZONE_VOISINS_X + 12, ZONE_VOISINS_Y + 69, ligne, COULEUR_TEXTE);
+
+    kvoisin = point_list_select_k_nearby(list, point_selectionne, k);
+    if (kvoisin == NULL) {
+        MLV_draw_text(ZONE_VOISINS_X + 12, ZONE_VOISINS_Y + 94, "Aucun voisin", COULEUR_TEXTE);
+        return;
+    }
+
+    nb_voisins = get_stack_size(kvoisin);
+    max_lignes = (ZONE_VOISINS_HAUTEUR - 116) / (ZONE_VOISINS_LIGNE_HAUTEUR + 16);
+    y = ZONE_VOISINS_Y + 96;
+
+    for (i = 0; i < nb_voisins; i++) {
+        pd = (PointDistance *) stack_pop(kvoisin);
+        if (pd != NULL) {
+            voisin = pd->point;
+            if ((int)i < max_lignes && voisin != NULL) {
+                couleur_ligne = classe_color(get_point_classe(voisin));
+
+                if (i == 0) {
+                    MLV_draw_filled_rectangle(ZONE_VOISINS_X + 8, y - 3, ZONE_VOISINS_LARGEUR - 16, 31, MLV_COLOR_LIGHT_PINK);
+                    MLV_draw_rectangle(ZONE_VOISINS_X + 8, y - 3, ZONE_VOISINS_LARGEUR - 16, 31, MLV_COLOR_ORANGE);
+                }
+
+                coords[0] = '\0';
+                dimensions = get_point_dimensions(voisin);
+                for (dimension = 0; dimension < dimensions && dimension < 3; dimension++) {
+                    if (dimension == 0) {
+                        sprintf(morceau, "%.2f", get_point_position(voisin, dimension));
+                    } else {
+                        sprintf(morceau, ", %.2f", get_point_position(voisin, dimension));
+                    }
+                    if (strlen(coords) + strlen(morceau) < sizeof(coords) - 1) {
+                        strcat(coords, morceau);
+                    }
+                }
+                if (dimensions > 3 && strlen(coords) + 5 < sizeof(coords) - 1) {
+                    strcat(coords, ", ...");
+                }
+
+                MLV_draw_filled_circle(ZONE_VOISINS_X + 17, y + 8, 6, couleur_ligne);
+                MLV_draw_circle(ZONE_VOISINS_X + 17, y + 8, 6, COULEUR_BORDURE);
+
+                sprintf(ligne, "%lu. classe %d  dist %.2f", (unsigned long)(i + 1), get_point_classe(voisin), get_point_distance_value(pd));
+                MLV_draw_text(ZONE_VOISINS_X + 30, y, ligne, COULEUR_TEXTE);
+
+                ligne_y = y + 16;
+                sprintf(ligne, "pos: [%s]", coords);
+                MLV_draw_text(ZONE_VOISINS_X + 30, ligne_y, ligne, COULEUR_TEXTE);
+
+                y += ZONE_VOISINS_LIGNE_HAUTEUR + 16;
+            }
+            free(pd);
+        }
+    }
+
+    if ((int)nb_voisins > max_lignes) {
+        fprintf(ligne, "+%lu autres voisins", (unsigned long)(nb_voisins - (size_t)max_lignes));
+        MLV_draw_text(ZONE_VOISINS_X + 16, ZONE_VOISINS_Y + ZONE_VOISINS_HAUTEUR - 24, ligne, COULEUR_BORDURE);
+    }
+
+    free_stack(kvoisin);
 }
 
 static void dessiner_options_affichage(int * option_voisinage, int * option_descision) {
