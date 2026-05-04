@@ -432,6 +432,31 @@ static void dessiner_bouton(int x, int y, int largeur, int hauteur, const char *
     MLV_draw_text(x + 10, y + 12, texte, COULEUR_TEXTE);
 }
 
+static void dessiner_titre(void) {
+    MLV_draw_filled_rectangle(514, 28, 250, 58, MLV_COLOR_WHITE);
+    MLV_draw_rectangle(514, 28, 250, 58, COULEUR_PANNEAU);
+    MLV_draw_text(560, 42, "k plus proches voisins", COULEUR_BORDURE);
+    MLV_draw_text(570, 63, "interface graphique", COULEUR_TEXTE);
+    dessiner_petit_coeur(536, 51, COULEUR_PANNEAU);
+    dessiner_petit_coeur(742, 51, COULEUR_PANNEAU);
+}
+
+static void dessiner_petit_coeur(int x, int y, MLV_Color couleur) {
+    MLV_draw_filled_circle(x, y, 4, couleur);
+    MLV_draw_filled_circle(x + 7, y, 4, couleur);
+    MLV_draw_filled_rectangle(x - 1, y + 3, 10, 6, couleur);
+    MLV_draw_line(x - 1, y + 8, x + 3, y + 12, couleur);
+    MLV_draw_line(x + 10, y + 8, x + 3, y + 12, couleur);
+}
+
+static void dessiner_fleur(int x, int y, MLV_Color couleur) {
+    MLV_draw_filled_circle(x - 7, y, 7, couleur);
+    MLV_draw_filled_circle(x + 7, y, 7, couleur);
+    MLV_draw_filled_circle(x, y - 7, 7, couleur);
+    MLV_draw_filled_circle(x, y + 7, 7, couleur);
+    MLV_draw_filled_circle(x, y, 5, MLV_COLOR_WHITE);
+}
+
 static void dessiner_checkbox(int x, int y, int active) {
     MLV_draw_filled_rectangle(x + 2, y + 2, 17, 17, COULEUR_OMBRE);
     MLV_draw_filled_rectangle(x, y, 17, 17, MLV_COLOR_WHITE);
