@@ -427,9 +427,13 @@ static void dessiner_point(Point * P,int classe) {
 }
 
 static void dessiner_bouton(int x, int y, int largeur, int hauteur, const char *texte) {
-    MLV_draw_filled_rectangle(x, y, largeur, hauteur, COULEUR_PANNEAU);
+    MLV_draw_filled_rectangle(x + 5, y + 6, largeur, hauteur, COULEUR_OMBRE);
+    MLV_draw_filled_rectangle(x - 2, y - 2, largeur + 4, hauteur + 4, MLV_COLOR_PINK);
+    MLV_draw_filled_rectangle(x, y, largeur, hauteur, COULEUR_SURFACE);
     MLV_draw_rectangle(x, y, largeur, hauteur, COULEUR_BORDURE);
-    MLV_draw_text(x + 10, y + 12, texte, COULEUR_TEXTE);
+    MLV_draw_line(x + 8, y + hauteur - 8, x + largeur - 8, y + hauteur - 8, COULEUR_PANNEAU);
+    dessiner_petit_coeur(x + largeur - 18, y + hauteur / 2 - 3, COULEUR_PANNEAU);
+    MLV_draw_text(x + 12, y + hauteur / 2 - 6, texte, COULEUR_TEXTE);
 }
 
 static void dessiner_titre(void) {
