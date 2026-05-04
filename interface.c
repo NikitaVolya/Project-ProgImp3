@@ -131,6 +131,8 @@ int interface_lancer(PointsList * list) {
     MLV_Keyboard_button touche;
     int resultat;
     FILE * File;
+    int saved_nb_classes;
+    int saved_dimensions; 
     p = NULL;
     point_selectionne = NULL ;
     option_voisin = 0;
@@ -162,7 +164,9 @@ int interface_lancer(PointsList * list) {
             continuer = 0;
         }
         else if (touche == MLV_KEYBOARD_NONE) {
-
+            
+            animer_sparkle(list, classe, mode, k, &option_voisin, &option_descision, nb_classe, point_selectionne, souris_x, souris_y); 
+            
             if (point_dans_rectangle(souris_x, souris_y, BOUTON_REINIT_X, BOUTON_REINIT_Y, BOUTON_REINIT_LARGEUR, BOUTON_REINIT_HAUTEUR)) {
                 if (list != NULL) {
                     int saved_nb_classes = list->nb_classes;
@@ -378,6 +382,7 @@ static void dessiner_zone_affichage(PointsList * list, Point * point_selectionne
     Stack * kvoisin;
     Point ** neighbors = NULL;
     size_t neighbor_count = 0;
+    PointDistance * pd; 
     int color_to_use;
     size_t j;
     
@@ -566,7 +571,9 @@ static void dessiner_options_affichage(int * option_voisinage, int * option_desc
 
 static void dessiner_point(Point * P,int classe) {
     int x, y;
-
+    MLV_Color c;
+    MLV_Color symbole; 
+    
     if (P == NULL || get_point_dimensions(P) < 2) return;
 
     x = ZONE_X + get_point_position(P, 0) * 250 + 255 ;
