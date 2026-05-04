@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <MLV/MLV_all.h>
 #include "points_list.h"
 #include "point.h"
@@ -14,10 +15,13 @@
 #define LARGEUR_FENETRE 1200
 #define HAUTEUR_FENETRE 700
 
-#define COULEUR_FOND MLV_COLOR_GRAY
-#define COULEUR_PANNEAU MLV_COLOR_WHITE
-#define COULEUR_BORDURE MLV_COLOR_BLACK
+#define COULEUR_FOND MLV_COLOR_WHITE
+#define COULEUR_PANNEAU MLV_COLOR_PINK
+#define COULEUR_BORDURE MLV_COLOR_PURPLE
 #define COULEUR_TEXTE MLV_COLOR_BLACK
+#define COULEUR_OMBRE MLV_COLOR_GRAY
+#define COULEUR_SURFACE MLV_COLOR_WHITE
+#define CLASSE_VOISIN_SELECTIONNE -1
 
 #define ZONE_X 40
 #define ZONE_Y 100
@@ -70,6 +74,12 @@
 #define BOUTON_MESSAGE_LARGEUR 250
 #define BOUTON_MESSAGE_HAUTEUR 50
 
+#define ZONE_VOISINS_X 570
+#define ZONE_VOISINS_Y 140
+#define ZONE_VOISINS_LARGEUR 210
+#define ZONE_VOISINS_HAUTEUR 470
+#define ZONE_VOISINS_LIGNE_HAUTEUR 18
+
 /* ********************************************************************************************************************
  *                                              STATIQUE DECLARATION
  ******************************************************************************************************************** */
@@ -81,11 +91,22 @@ static void dessiner_zone_affichage(PointsList *list, Point * point_selectionne,
 static void dessiner_options_affichage(int * option_voisinage,int * option_descision);
 static void dessiner_point(Point * P,int classe);
 static void dessiner_bouton(int x, int y, int largeur, int hauteur, const char *texte);
+
+static void dessiner_titre(void);
+static void dessiner_petit_coeur(int x, int y, MLV_Color couleur);
+static void dessiner_fleur(int x, int y, MLV_Color couleur);
+static void dessiner_checkbox(int x, int y, int active);
+static void dessiner_grille_douce(void);
+static void dessiner_liste_voisins(PointsList * list, Point * point_selectionne, int k, int option_voisinage, int mode);
+
 static MLV_Color classe_color(int i);
 static char classe_symbole(int i);
 
 static Point* select_point(PointsList * list, int x, int y);
 static int point_dans_rectangle(int x, int y, int rx, int ry, int rw, int rh);
+
+static void animer_sparkle(PointsList * list, size_t classe, int mode, int k, int * option_voisinage, int * option_descision, size_t nb_classe, Point * point_selectionne, int x, int y);
+static void dessiner_sparkle(int x, int y, int etape);
 
 
 /* ********************************************************************************************************************
@@ -310,6 +331,7 @@ static void dessiner_interface(PointsList * list, size_t classe,int mode, int k,
     dessiner_fond(classe,mode,k,nb_classe);
     dessiner_zone_affichage(list, point_selectionne, k, *option_voisinage);
     dessiner_options_affichage(option_voisinage,option_descision);
+    dessiner_liste_voisins(list, point_selectionne, k, *option_voisinage, mode);
 }
 
 static void dessiner_fond(size_t classe,int mode,int k,size_t nb_classe) {
@@ -317,6 +339,15 @@ static void dessiner_fond(size_t classe,int mode,int k,size_t nb_classe) {
     char text[100];
     char textk[100];
     MLV_clear_window(COULEUR_FOND);
+
+        /* Decoration de fond visuelle. */
+    MLV_draw_filled_rectangle(0, 0, LARGEUR_FENETRE, 18, MLV_COLOR_PINK);
+    MLV_draw_filled_rectangle(0, HAUTEUR_FENETRE - 18, LARGEUR_FENETRE, 18, MLV_COLOR_PINK);
+    dessiner_fleur(1120, 80, MLV_COLOR_PINK);
+    dessiner_fleur(1135, 610, MLV_COLOR_PURPLE);
+    dessiner_fleur(700, 620, MLV_COLOR_PINK);
+
+    dessiner_titre();
     if (mode == 1) {
         dessiner_bouton(BOUTON_MODE_X, BOUTON_MODE_Y, BOUTON_MODE_LARGEUR, BOUTON_MODE_HAUTEUR, "Mode creation");
         dessiner_bouton(DELETE_POINT_X, DELETE_POINT_Y, DELETE_POINT_LARGEUR, DELETE_POINT_HAUTEUR, "Suprimmer le dernier point");
