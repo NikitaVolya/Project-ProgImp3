@@ -15,12 +15,11 @@
 #define LARGEUR_FENETRE 1200
 #define HAUTEUR_FENETRE 700
 
-#define COULEUR_FOND MLV_COLOR_WHITE
 #define COULEUR_PANNEAU MLV_COLOR_PINK
 #define COULEUR_BORDURE MLV_COLOR_PURPLE
 #define COULEUR_TEXTE MLV_COLOR_BLACK
-#define COULEUR_OMBRE MLV_COLOR_GRAY
 #define COULEUR_SURFACE MLV_COLOR_WHITE
+#define COULEUR_ARRIERE_PLAN MLV_rgba(255, 245, 230, 255)
 #define CLASSE_VOISIN_SELECTIONNE -1
 
 #define ZONE_X 40
@@ -90,23 +89,19 @@ static void dessiner_fond(size_t classe,int mode, int k,size_t nb_classe);
 static void dessiner_zone_affichage(PointsList *list, Point * point_selectionne, int k, int option_voisinage);
 static void dessiner_options_affichage(int * option_voisinage,int * option_descision);
 static void dessiner_point(Point * P,int classe);
+static void dessiner_point_voisin(Point * P, int classe_selectionne);
 static void dessiner_bouton(int x, int y, int largeur, int hauteur, const char *texte);
 
 static void dessiner_titre(void);
-static void dessiner_petit_coeur(int x, int y, MLV_Color couleur);
-static void dessiner_fleur(int x, int y, MLV_Color couleur);
 static void dessiner_checkbox(int x, int y, int active);
-static void dessiner_grille_douce(void);
-static void dessiner_liste_voisins(PointsList * list, Point * point_selectionne, int k, int option_voisinage, int mode);
+static void dessiner_boutons_communs(int k, size_t classe, size_t nb_classe);
+
 
 static MLV_Color classe_color(int i);
 static char classe_symbole(int i);
 
 static Point* select_point(PointsList * list, int x, int y);
 static int point_dans_rectangle(int x, int y, int rx, int ry, int rw, int rh);
-
-static void animer_sparkle(PointsList * list, size_t classe, int mode, int k, int * option_voisinage, int * option_descision, size_t nb_classe, Point * point_selectionne, int x, int y);
-static void dessiner_sparkle(int x, int y, int etape);
 
 
 /* ********************************************************************************************************************
@@ -131,8 +126,6 @@ int interface_lancer(PointsList * list) {
     MLV_Keyboard_button touche;
     int resultat;
     FILE * File;
-    int saved_nb_classes;
-    int saved_dimensions; 
     p = NULL;
     point_selectionne = NULL ;
     option_voisin = 0;
@@ -164,8 +157,6 @@ int interface_lancer(PointsList * list) {
             continuer = 0;
         }
         else if (touche == MLV_KEYBOARD_NONE) {
-            
-            animer_sparkle(list, classe, mode, k, &option_voisin, &option_descision, nb_classe, point_selectionne, souris_x, souris_y); 
             
             if (point_dans_rectangle(souris_x, souris_y, BOUTON_REINIT_X, BOUTON_REINIT_Y, BOUTON_REINIT_LARGEUR, BOUTON_REINIT_HAUTEUR)) {
                 if (list != NULL) {
@@ -262,7 +253,7 @@ int interface_lancer(PointsList * list) {
                         if (p != NULL)
                             classe_new_point = select_class_bf(list,p,k);
                         else
-                            classe_new_point = 1; // Default class if list is empty
+                            classe_new_point = 1;
                     }
                     else {
                         fichier = input_box("donner la classe du point : ");
@@ -335,232 +326,78 @@ static void dessiner_interface(PointsList * list, size_t classe,int mode, int k,
     dessiner_fond(classe,mode,k,nb_classe);
     dessiner_zone_affichage(list, point_selectionne, k, *option_voisinage);
     dessiner_options_affichage(option_voisinage,option_descision);
-    dessiner_liste_voisins(list, point_selectionne, k, *option_voisinage, mode);
 }
 
-static void dessiner_fond(size_t classe,int mode,int k,size_t nb_classe) {
-
+static void dessiner_boutons_communs(int k, size_t classe, size_t nb_classe) {
     char text[100];
     char textk[100];
-    MLV_clear_window(COULEUR_FOND);
-
-        /* Decoration de fond visuelle. */
-    MLV_draw_filled_rectangle(0, 0, LARGEUR_FENETRE, 18, MLV_COLOR_PINK);
-    MLV_draw_filled_rectangle(0, HAUTEUR_FENETRE - 18, LARGEUR_FENETRE, 18, MLV_COLOR_PINK);
-    dessiner_fleur(1120, 80, MLV_COLOR_PINK);
-    dessiner_fleur(1135, 610, MLV_COLOR_PURPLE);
-    dessiner_fleur(700, 620, MLV_COLOR_PINK);
-
-    dessiner_titre();
-    if (mode == 1) {
-        dessiner_bouton(BOUTON_MODE_X, BOUTON_MODE_Y, BOUTON_MODE_LARGEUR, BOUTON_MODE_HAUTEUR, "Mode creation");
-        dessiner_bouton(DELETE_POINT_X, DELETE_POINT_Y, DELETE_POINT_LARGEUR, DELETE_POINT_HAUTEUR, "Suprimmer le dernier point");
-    }
-    else {
-        dessiner_bouton(BOUTON_MODE_X, BOUTON_MODE_Y, BOUTON_MODE_LARGEUR, BOUTON_MODE_HAUTEUR, "Mode kpp");
-    }
 
     sprintf(textk, "Valeur de k : %d", k);
     dessiner_bouton(BOUTON_K_X, BOUTON_K_Y, BOUTON_K_LARGEUR, BOUTON_K_HAUTEUR, textk);
 
     dessiner_bouton(BOUTON_REINIT_X, BOUTON_REINIT_Y, BOUTON_REINIT_LARGEUR, BOUTON_REINIT_HAUTEUR, "Reinitialisation");
 
-    if (classe > 0) {
-        sprintf(text, "classe du point : %ld / max classe : %ld  ", classe,nb_classe);
-    } else {
-        sprintf(text, "classe du point :  / max classe : %ld  ",nb_classe);
-    }
+    if (classe > 0)
+        sprintf(text, "classe du point : %ld / max classe : %ld  ", classe, nb_classe);
+    else
+        sprintf(text, "classe du point :  / max classe : %ld  ", nb_classe);
     dessiner_bouton(BOUTON_CLASSE_X, BOUTON_CLASSE_Y, BOUTON_CLASSE_LARGEUR, BOUTON_CLASSE_HAUTEUR, text);
 
     dessiner_bouton(BOUTON_CHARGER_X, BOUTON_CHARGER_Y, BOUTON_CHARGER_LARGEUR, BOUTON_CHARGER_HAUTEUR, "Chargement fichier");
     dessiner_bouton(BOUTON_SAUVEGARDER_X, BOUTON_SAUVEGARDER_Y, BOUTON_SAUVEGARDER_LARGEUR, BOUTON_SAUVEGARDER_HAUTEUR, "Sauvegarde fichier");
 }
 
+static void dessiner_fond(size_t classe, int mode, int k, size_t nb_classe) {
+    MLV_clear_window(COULEUR_ARRIERE_PLAN);
+    dessiner_titre();
+
+    if (mode == 1) {
+        dessiner_bouton(BOUTON_MODE_X, BOUTON_MODE_Y, BOUTON_MODE_LARGEUR, BOUTON_MODE_HAUTEUR, "Mode creation");
+        dessiner_bouton(DELETE_POINT_X, DELETE_POINT_Y, DELETE_POINT_LARGEUR, DELETE_POINT_HAUTEUR, "Suprimmer le dernier point");
+    } else {
+        dessiner_bouton(BOUTON_MODE_X, BOUTON_MODE_Y, BOUTON_MODE_LARGEUR, BOUTON_MODE_HAUTEUR, "Mode kpp");
+    }
+
+    dessiner_boutons_communs(k, classe, nb_classe);
+}
+
 static void dessiner_zone_affichage(PointsList * list, Point * point_selectionne, int k, int option_voisinage) {
     size_t i;
     Point * temp;
     Stack * kvoisin;
-    Point ** neighbors = NULL;
-    size_t neighbor_count = 0;
-    PointDistance * pd; 
-    int color_to_use;
-    size_t j;
-    
-    MLV_draw_filled_rectangle(ZONE_X + 10, ZONE_Y + 12, ZONE_LARGEUR, ZONE_HAUTEUR, COULEUR_OMBRE);
-    MLV_draw_filled_rectangle(ZONE_X - 4, ZONE_Y - 4, ZONE_LARGEUR + 8, ZONE_HAUTEUR + 8, MLV_COLOR_PINK);
+    PointDistance * pd;
+
     MLV_draw_filled_rectangle(ZONE_X, ZONE_Y, ZONE_LARGEUR, ZONE_HAUTEUR, COULEUR_SURFACE);
     MLV_draw_rectangle(ZONE_X, ZONE_Y, ZONE_LARGEUR, ZONE_HAUTEUR, COULEUR_BORDURE);
-    MLV_draw_rectangle(ZONE_X + 5, ZONE_Y + 5, ZONE_LARGEUR - 10, ZONE_HAUTEUR - 10, COULEUR_PANNEAU);
-    dessiner_grille_douce();
-    
+
     if (list != NULL) {
-        // 1. Si l'option voisinage est active, on identifie les voisins d'abord
+        for (i = 0; i < list->count; i++) {
+            temp = points_list_get_point(list, i);
+            dessiner_point(temp, get_point_classe(temp));
+        }
+
         if (option_voisinage && point_selectionne != NULL) {
             kvoisin = point_list_select_k_nearby(list, point_selectionne, k);
             if (kvoisin != NULL) {
-                neighbor_count = get_stack_size(kvoisin);
-                neighbors = malloc(sizeof(Point*) * neighbor_count);
-                for (i = 0; i < neighbor_count; i++) {
-                    PointDistance * pd = (PointDistance *) stack_pop(kvoisin);
-                    neighbors[i] = pd->point;
+                while (!stack_is_empty(kvoisin)) {
+                    pd = (PointDistance *) stack_pop(kvoisin);
+                    dessiner_point_voisin(pd->point, get_point_classe(point_selectionne));
                     free(pd);
                 }
                 free_stack(kvoisin);
             }
         }
 
-        // 2. On dessine chaque point une seule fois avec la bonne couleur
-        for (i = 0; i < list->count; i++) {
-            temp = points_list_get_point(list, i);
-            int color_to_use = get_point_classe(temp);
-            
-            if (temp == point_selectionne) {
-                color_to_use = 0; // Noir pour le point sélectionné
-            } else if (neighbors != NULL) {
-                // Vérifier si ce point est dans la liste des voisins
-                for (size_t j = 0; j < neighbor_count; j++) {
-                    if (temp == neighbors[j]) {
-                        color_to_use = CLASSE_VOISIN_SELECTIONNE;
-                        break;
-                    }
-                }
-            }
-            dessiner_point(temp, color_to_use);
-        }
-
-        if (neighbors != NULL) free(neighbors);
+        if (point_selectionne != NULL)
+            dessiner_point(point_selectionne, 0);
     }
-}
-
-static void dessiner_liste_voisins(PointsList * list, Point * point_selectionne, int k, int option_voisinage, int mode) {
-    Stack * kvoisin;
-    PointDistance * pd;
-    Point * voisin;
-    size_t nb_voisins;
-    size_t i;
-    size_t dimension;
-    size_t dimensions;
-    int y;
-    int max_lignes;
-    int ligne_y;
-    MLV_Color couleur_ligne;
-    char ligne[160];
-    char coords[96];
-    char morceau[32];
-
-    /* Liste visuelle : seulement en mode KPP + voisinage actif. */
-    if (mode != 2 || option_voisinage == 0) {
-        return;
-    }
-
-    MLV_draw_filled_rectangle(ZONE_VOISINS_X + 5, ZONE_VOISINS_Y + 6, ZONE_VOISINS_LARGEUR, ZONE_VOISINS_HAUTEUR, COULEUR_OMBRE);
-    MLV_draw_filled_rectangle(ZONE_VOISINS_X - 2, ZONE_VOISINS_Y - 2, ZONE_VOISINS_LARGEUR + 4, ZONE_VOISINS_HAUTEUR + 4, MLV_COLOR_PINK);
-    MLV_draw_filled_rectangle(ZONE_VOISINS_X, ZONE_VOISINS_Y, ZONE_VOISINS_LARGEUR, ZONE_VOISINS_HAUTEUR, COULEUR_SURFACE);
-    MLV_draw_rectangle(ZONE_VOISINS_X, ZONE_VOISINS_Y, ZONE_VOISINS_LARGEUR, ZONE_VOISINS_HAUTEUR, COULEUR_BORDURE);
-    MLV_draw_rectangle(ZONE_VOISINS_X + 4, ZONE_VOISINS_Y + 4, ZONE_VOISINS_LARGEUR - 8, ZONE_VOISINS_HAUTEUR - 8, COULEUR_PANNEAU);
-
-    MLV_draw_text(ZONE_VOISINS_X + 14, ZONE_VOISINS_Y + 14, "Voisins KPP", COULEUR_BORDURE);
-    MLV_draw_line(ZONE_VOISINS_X + 12, ZONE_VOISINS_Y + 35, ZONE_VOISINS_X + ZONE_VOISINS_LARGEUR - 12, ZONE_VOISINS_Y + 35, COULEUR_PANNEAU);
-
-    if (point_selectionne == NULL || list == NULL) {
-        MLV_draw_text(ZONE_VOISINS_X + 12, ZONE_VOISINS_Y + 52, "Clique un point", COULEUR_TEXTE);
-        MLV_draw_text(ZONE_VOISINS_X + 12, ZONE_VOISINS_Y + 70, "pour voir ses voisins", COULEUR_TEXTE);
-        return;
-    }
-
-    coords[0] = '\0';
-    dimensions = get_point_dimensions(point_selectionne);
-    for (dimension = 0; dimension < dimensions && dimension < 3; dimension++) {
-        if (dimension == 0) {
-            sprintf(morceau, "%.2f", get_point_position(point_selectionne, dimension));
-        } else {
-            sprintf(morceau, ", %.2f", get_point_position(point_selectionne, dimension));
-        }
-        if (strlen(coords) + strlen(morceau) < sizeof(coords) - 1) {
-            strcat(coords, morceau);
-        }
-    }
-    if (dimensions > 3 && strlen(coords) + 5 < sizeof(coords) - 1) {
-        strcat(coords, ", ...");
-    }
-
-    sprintf(ligne, "Point: classe %d", get_point_classe(point_selectionne));
-    MLV_draw_text(ZONE_VOISINS_X + 12, ZONE_VOISINS_Y + 52, ligne, COULEUR_TEXTE);
-    sprintf(ligne, "pos: [%s]", coords);
-    MLV_draw_text(ZONE_VOISINS_X + 12, ZONE_VOISINS_Y + 69, ligne, COULEUR_TEXTE);
-
-    kvoisin = point_list_select_k_nearby(list, point_selectionne, k);
-    if (kvoisin == NULL) {
-        MLV_draw_text(ZONE_VOISINS_X + 12, ZONE_VOISINS_Y + 94, "Aucun voisin", COULEUR_TEXTE);
-        return;
-    }
-
-    nb_voisins = get_stack_size(kvoisin);
-    max_lignes = (ZONE_VOISINS_HAUTEUR - 116) / (ZONE_VOISINS_LIGNE_HAUTEUR + 16);
-    y = ZONE_VOISINS_Y + 96;
-
-    for (i = 0; i < nb_voisins; i++) {
-        pd = (PointDistance *) stack_pop(kvoisin);
-        if (pd != NULL) {
-            voisin = pd->point;
-            if ((int)i < max_lignes && voisin != NULL) {
-                couleur_ligne = classe_color(get_point_classe(voisin));
-
-                if (i == 0) {
-                    MLV_draw_filled_rectangle(ZONE_VOISINS_X + 8, y - 3, ZONE_VOISINS_LARGEUR - 16, 31, MLV_COLOR_LIGHT_PINK);
-                    MLV_draw_rectangle(ZONE_VOISINS_X + 8, y - 3, ZONE_VOISINS_LARGEUR - 16, 31, MLV_COLOR_ORANGE);
-                }
-
-                coords[0] = '\0';
-                dimensions = get_point_dimensions(voisin);
-                for (dimension = 0; dimension < dimensions && dimension < 3; dimension++) {
-                    if (dimension == 0) {
-                        sprintf(morceau, "%.2f", get_point_position(voisin, dimension));
-                    } else {
-                        sprintf(morceau, ", %.2f", get_point_position(voisin, dimension));
-                    }
-                    if (strlen(coords) + strlen(morceau) < sizeof(coords) - 1) {
-                        strcat(coords, morceau);
-                    }
-                }
-                if (dimensions > 3 && strlen(coords) + 5 < sizeof(coords) - 1) {
-                    strcat(coords, ", ...");
-                }
-
-                MLV_draw_filled_circle(ZONE_VOISINS_X + 17, y + 8, 6, couleur_ligne);
-                MLV_draw_circle(ZONE_VOISINS_X + 17, y + 8, 6, COULEUR_BORDURE);
-
-                sprintf(ligne, "%lu. classe %d  dist %.2f", (unsigned long)(i + 1), get_point_classe(voisin), get_point_distance_value(pd));
-                MLV_draw_text(ZONE_VOISINS_X + 30, y, ligne, COULEUR_TEXTE);
-
-                ligne_y = y + 16;
-                sprintf(ligne, "pos: [%s]", coords);
-                MLV_draw_text(ZONE_VOISINS_X + 30, ligne_y, ligne, COULEUR_TEXTE);
-
-                y += ZONE_VOISINS_LIGNE_HAUTEUR + 16;
-            }
-            free(pd);
-        }
-    }
-
-    if ((int)nb_voisins > max_lignes) {
-        sprintf(ligne, "+%lu autres voisins", (unsigned long)(nb_voisins - (size_t)max_lignes));
-        MLV_draw_text(ZONE_VOISINS_X + 16, ZONE_VOISINS_Y + ZONE_VOISINS_HAUTEUR - 24, ligne, COULEUR_BORDURE);
-    }
-
-    free_stack(kvoisin);
 }
 
 static void dessiner_options_affichage(int * option_voisinage, int * option_descision) {
-    MLV_draw_filled_rectangle(ZONE_OPTIONS_X + 8, ZONE_OPTIONS_Y + 10, ZONE_OPTIONS_LARGEUR, ZONE_OPTIONS_HAUTEUR, COULEUR_OMBRE);
-    MLV_draw_filled_rectangle(ZONE_OPTIONS_X - 3, ZONE_OPTIONS_Y - 3, ZONE_OPTIONS_LARGEUR + 6, ZONE_OPTIONS_HAUTEUR + 6, MLV_COLOR_PINK);
     MLV_draw_filled_rectangle(ZONE_OPTIONS_X, ZONE_OPTIONS_Y, ZONE_OPTIONS_LARGEUR, ZONE_OPTIONS_HAUTEUR, COULEUR_SURFACE);
     MLV_draw_rectangle(ZONE_OPTIONS_X, ZONE_OPTIONS_Y, ZONE_OPTIONS_LARGEUR, ZONE_OPTIONS_HAUTEUR, COULEUR_BORDURE);
-    MLV_draw_rectangle(ZONE_OPTIONS_X + 4, ZONE_OPTIONS_Y + 4, ZONE_OPTIONS_LARGEUR - 8, ZONE_OPTIONS_HAUTEUR - 8, COULEUR_PANNEAU);
 
-    dessiner_petit_coeur(ZONE_OPTIONS_X + 24, ZONE_OPTIONS_Y + 22, COULEUR_PANNEAU);
-    MLV_draw_text(ZONE_OPTIONS_X + 45, ZONE_OPTIONS_Y + 15, "Options d'affichage", COULEUR_TEXTE);
-    MLV_draw_line(ZONE_OPTIONS_X + 18, ZONE_OPTIONS_Y + 36, ZONE_OPTIONS_X + ZONE_OPTIONS_LARGEUR - 18, ZONE_OPTIONS_Y + 36, COULEUR_PANNEAU);
+    MLV_draw_text(ZONE_OPTIONS_X + 10, ZONE_OPTIONS_Y + 10, "Options d'affichage", COULEUR_TEXTE);
 
     dessiner_checkbox(ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 48, *option_voisinage);
     MLV_draw_text(ZONE_OPTIONS_X + 42, ZONE_OPTIONS_Y + 46, "voisinage", COULEUR_TEXTE);
@@ -580,13 +417,8 @@ static void dessiner_point(Point * P,int classe) {
     y = ZONE_Y + get_point_position(P, 1) * 250 + 255 ;
 
     if (classe == CLASSE_VOISIN_SELECTIONNE) {
-        /* Voisin KPP selectionne : couleur speciale pour qu'il ressorte clairement. */
-        MLV_draw_filled_circle(x + 4, y + 5, 13, MLV_COLOR_GRAY);
-        MLV_draw_filled_circle(x, y, 13, MLV_COLOR_YELLOW);
-        MLV_draw_circle(x, y, 13, MLV_COLOR_ORANGE);
-        MLV_draw_circle(x, y, 11, MLV_COLOR_ORANGE);
-        MLV_draw_circle(x, y, 9, MLV_COLOR_BLACK);
-        MLV_draw_text(x - 4, y - 7, "%c", MLV_COLOR_BLACK, classe_symbole(get_point_classe(P)));
+        MLV_draw_filled_circle(x, y, 13, MLV_COLOR_BLACK);
+        MLV_draw_text(x - 4, y - 7, "%c", MLV_COLOR_WHITE, classe_symbole(get_point_classe(P)));
         return;
     }
 
@@ -596,22 +428,15 @@ static void dessiner_point(Point * P,int classe) {
         symbole = MLV_COLOR_BLACK;
     }
 
-    /* Points normaux : remplissage colore au lieu d'un simple contour. */
-    MLV_draw_filled_circle(x + 3, y + 4, 10, MLV_COLOR_GRAY);
     MLV_draw_filled_circle(x, y, 10, c);
     MLV_draw_circle(x, y, 10, MLV_COLOR_BLACK);
-    MLV_draw_circle(x, y, 8, MLV_COLOR_WHITE);
     MLV_draw_text(x - 4, y - 7, "%c", symbole, classe_symbole(get_point_classe(P)));
 }
 
 static void dessiner_bouton(int x, int y, int largeur, int hauteur, const char *texte) {
-    MLV_draw_filled_rectangle(x + 5, y + 6, largeur, hauteur, COULEUR_OMBRE);
-    MLV_draw_filled_rectangle(x - 2, y - 2, largeur + 4, hauteur + 4, MLV_COLOR_PINK);
     MLV_draw_filled_rectangle(x, y, largeur, hauteur, COULEUR_SURFACE);
     MLV_draw_rectangle(x, y, largeur, hauteur, COULEUR_BORDURE);
-    MLV_draw_line(x + 8, y + hauteur - 8, x + largeur - 8, y + hauteur - 8, COULEUR_PANNEAU);
-    dessiner_petit_coeur(x + largeur - 18, y + hauteur / 2 - 3, COULEUR_PANNEAU);
-    MLV_draw_text(x + 12, y + hauteur / 2 - 6, texte, COULEUR_TEXTE);
+    MLV_draw_text(x + 8, y + hauteur / 2 - 6, texte, COULEUR_TEXTE);
 }
 
 static void dessiner_titre(void) {
@@ -619,41 +444,14 @@ static void dessiner_titre(void) {
     MLV_draw_rectangle(514, 28, 250, 58, COULEUR_PANNEAU);
     MLV_draw_text(560, 42, "k plus proches voisins", COULEUR_BORDURE);
     MLV_draw_text(570, 63, "interface graphique", COULEUR_TEXTE);
-    dessiner_petit_coeur(536, 51, COULEUR_PANNEAU);
-    dessiner_petit_coeur(742, 51, COULEUR_PANNEAU);
-}
-
-static void dessiner_petit_coeur(int x, int y, MLV_Color couleur) {
-    MLV_draw_filled_circle(x, y, 4, couleur);
-    MLV_draw_filled_circle(x + 7, y, 4, couleur);
-    MLV_draw_filled_rectangle(x - 1, y + 3, 10, 6, couleur);
-    MLV_draw_line(x - 1, y + 8, x + 3, y + 12, couleur);
-    MLV_draw_line(x + 10, y + 8, x + 3, y + 12, couleur);
-}
-
-static void dessiner_fleur(int x, int y, MLV_Color couleur) {
-    MLV_draw_filled_circle(x - 7, y, 7, couleur);
-    MLV_draw_filled_circle(x + 7, y, 7, couleur);
-    MLV_draw_filled_circle(x, y - 7, 7, couleur);
-    MLV_draw_filled_circle(x, y + 7, 7, couleur);
-    MLV_draw_filled_circle(x, y, 5, MLV_COLOR_WHITE);
 }
 
 static void dessiner_checkbox(int x, int y, int active) {
-    MLV_draw_filled_rectangle(x + 2, y + 2, 17, 17, COULEUR_OMBRE);
     MLV_draw_filled_rectangle(x, y, 17, 17, MLV_COLOR_WHITE);
     MLV_draw_rectangle(x, y, 17, 17, COULEUR_BORDURE);
     if (active != 0) {
         MLV_draw_line(x + 3, y + 9, x + 7, y + 13, COULEUR_BORDURE);
         MLV_draw_line(x + 7, y + 13, x + 14, y + 4, COULEUR_BORDURE);
-    }
-}
-
-static void dessiner_grille_douce(void) {
-    int i;
-    for (i = 1; i < 10; i++) {
-        MLV_draw_line(ZONE_X + i * 51, ZONE_Y + 6, ZONE_X + i * 51, ZONE_Y + ZONE_HAUTEUR - 6, MLV_COLOR_GRAY);
-        MLV_draw_line(ZONE_X + 6, ZONE_Y + i * 51, ZONE_X + ZONE_LARGEUR - 6, ZONE_Y + i * 51, MLV_COLOR_GRAY);
     }
 }
 
@@ -747,44 +545,19 @@ static char classe_symbole(int i) {
     return symbole;
 }
 
-static void animer_sparkle(PointsList * list, size_t classe, int mode, int k, int * option_voisinage, int * option_descision, size_t nb_classe, Point * point_selectionne, int x, int y) {
-    int i;
-    for (i = 0; i < 7; i++) {
-        dessiner_interface(list, classe, mode, k, option_voisinage, option_descision, nb_classe, point_selectionne);
-        dessiner_sparkle(x, y, i);
-        MLV_actualise_window();
-        MLV_wait_milliseconds(35);
-    }
-}
-
-static void dessiner_sparkle(int x, int y, int etape) {
-    int r;
-    int d;
+static void dessiner_point_voisin(Point * P, int classe_selectionne) {
+    int x, y;
     MLV_Color c;
 
-    r = 4 + etape * 3;
-    d = 8 + etape * 4;
-    if (etape % 2 == 0) {
-        c = MLV_COLOR_YELLOW;
-    }
-    else {
-        c = MLV_COLOR_PINK;
-    }
+    if (P == NULL || get_point_dimensions(P) < 2) return;
 
-    MLV_draw_circle(x, y, r, c);
-    MLV_draw_line(x - d, y, x - d / 2, y, c);
-    MLV_draw_line(x + d / 2, y, x + d, y, c);
-    MLV_draw_line(x, y - d, x, y - d / 2, c);
-    MLV_draw_line(x, y + d / 2, x, y + d, c);
-    MLV_draw_line(x - d / 2, y - d / 2, x - d / 4, y - d / 4, c);
-    MLV_draw_line(x + d / 4, y - d / 4, x + d / 2, y - d / 2, c);
-    MLV_draw_line(x - d / 2, y + d / 2, x - d / 4, y + d / 4, c);
-    MLV_draw_line(x + d / 4, y + d / 4, x + d / 2, y + d / 2, c);
+    x = ZONE_X + get_point_position(P, 0) * 250 + 255;
+    y = ZONE_Y + get_point_position(P, 1) * 250 + 255;
 
-    MLV_draw_filled_circle(x - d, y - d / 3, 2, MLV_COLOR_WHITE);
-    MLV_draw_filled_circle(x + d, y + d / 3, 2, MLV_COLOR_WHITE);
-    MLV_draw_filled_circle(x - d / 3, y + d, 2, MLV_COLOR_WHITE);
-    MLV_draw_filled_circle(x + d / 3, y - d, 2, MLV_COLOR_WHITE);
+    c = classe_color(classe_selectionne);
+    MLV_draw_filled_circle(x, y, 13, c);
+    MLV_draw_circle(x, y, 13, MLV_COLOR_BLACK);
+    MLV_draw_text(x - 4, y - 7, "%c", MLV_COLOR_WHITE, classe_symbole(get_point_classe(P)));
 }
 
 static Point* select_point(PointsList * list, int x, int y) {
