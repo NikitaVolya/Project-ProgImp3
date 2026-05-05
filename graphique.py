@@ -17,13 +17,10 @@ with open(sys.argv[1]) as f:
     values1.append(float(parts[0]))
     values2.append(float(parts[1]))
 
-print(values1)
-print(values2)
-
 
 plt.title("evolution du "+type_value1+" par rapport au "+type_value2+".")
-plt.xlabel(type_value1)
-plt.ylabel(type_value2)
-plt.plot(values1, values2)
+plt.xlabel(type_value2)
+plt.ylabel(type_value1)
+plt.plot(values2, values1)
 
 plt.savefig(sys.argv[2], dpi=300)

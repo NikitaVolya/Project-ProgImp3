@@ -26,4 +26,4 @@ $(GENERATOR_TARGET) : $(GENERATOR_OBJ)
 
 
 clean:
-	rm -f $(OBJ) $(TARGET) $(GENERATOR_TARGET) $(GENERATOR_OBJ) *.txt
+	rm -rf $(OBJ) $(TARGET) $(GENERATOR_TARGET) $(GENERATOR_OBJ) *.txt results

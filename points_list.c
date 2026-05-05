@@ -150,12 +150,9 @@ int extract_majority_class_from_stack(Stack *stack, int nb_classes) {
     best_class = 0;
     best_count = 0;
 
-    /* counting points and chosing best class */
-    printf("============== NEIGHBORS ==============\n");
     while (!stack_is_empty(stack)) {
         tmp_point = stack_pop(stack);
 
-        print_point(tmp_point->point);
 
 
         tmp_class = get_point_classe(tmp_point->point);
