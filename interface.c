@@ -229,13 +229,16 @@ int interface_lancer(PointsList * list) {
             if (point_dans_rectangle(souris_x, souris_y, ZONE_OPTIONS_X + 15, ZONE_OPTIONS_Y + 75, 15, 15)) {
                 option_descision = !option_descision;
             }
-            if (mode == 2 ) {
+            if (mode == 2) {
                 p = NULL;
                 if (point_dans_rectangle(souris_x, souris_y, ZONE_X, ZONE_Y, ZONE_LARGEUR, ZONE_HAUTEUR)) {
                     p = select_point(list, souris_x, souris_y);
                     if (p != NULL) {
                         point_selectionne = p;
-                        classe = (size_t)get_point_classe(p);
+                        if (option_descision) {
+                            set_point_classe(point_selectionne, select_class_bf(list, point_selectionne, k));
+                        }
+                        classe = (size_t)get_point_classe(point_selectionne);
                     }
                 }
                 if (point_dans_rectangle(souris_x, souris_y, BOUTON_MODE_X, BOUTON_MODE_Y, BOUTON_MODE_LARGEUR, BOUTON_MODE_HAUTEUR)) {
@@ -249,11 +252,10 @@ int interface_lancer(PointsList * list) {
                 }
                 if (point_dans_rectangle(souris_x, souris_y, ZONE_X+5, ZONE_Y+5, ZONE_LARGEUR-5, ZONE_HAUTEUR-5)) {
                     if (option_descision) {
-                        p = select_point(list,souris_x,souris_y);
-                        if (p != NULL)
-                            classe_new_point = select_class_bf(list,p,k);
-                        else
-                            classe_new_point = 1;
+                        p = create_point(0, create_vector2_with_values((souris_x - 255 - ZONE_X) / 250., (souris_y - 255 - ZONE_Y) / 250.));
+                        classe_new_point = select_class_bf(list, p, k);
+                        free_point(p);
+                        p = NULL;
                     }
                     else {
                         fichier = input_box("donner la classe du point : ");
@@ -263,23 +265,20 @@ int interface_lancer(PointsList * list) {
                         } else {
                             classe_new_point = 1;
                         }
-
                     }
                     if (list != NULL) {
-                        points_list_add_point(list,create_point(classe_new_point,create_vector2_with_values((souris_x - 255-ZONE_X)/250.,(souris_y - 255-ZONE_Y)/250.)));
+                        points_list_add_point(list, create_point(classe_new_point, create_vector2_with_values((souris_x - 255 - ZONE_X) / 250., (souris_y - 255 - ZONE_Y) / 250.)));
                         last_point = 1;
                     }
                 }
                 if (last_point == 1) {
                     if (point_dans_rectangle(souris_x, souris_y, DELETE_POINT_X, DELETE_POINT_Y, DELETE_POINT_LARGEUR, DELETE_POINT_HAUTEUR)) {
                         if (list != NULL && list->count > 0) {
-                            points_list_remove_point(list,list->count-1);
+                            points_list_remove_point(list, list->count - 1);
                         }
-                        last_point = 0 ;
+                        last_point = 0;
                     }
                 }
-
-
             }
 
         }

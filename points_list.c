@@ -32,7 +32,6 @@ PointsList* create_points_list(size_t start_capacity, int nb_classes, int dimens
 
 
 void points_list_add_point(PointsList *list, Point *point) {
-    Point **tmp;
 
     check_point_list_on_null("points_list_add_point", list);
     check_point_on_null("points_list_add_point", point);

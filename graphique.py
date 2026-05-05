@@ -24,3 +24,4 @@ plt.ylabel(type_value1)
 plt.plot(values2, values1)
 
 plt.savefig(sys.argv[2], dpi=300)
+plt.savefig(sys.argv[2].replace('.svg', '.png'), dpi=300)
