@@ -416,7 +416,7 @@ static void dessiner_point(Point * P,int classe) {
     y = ZONE_Y + get_point_position(P, 1) * 250 + 255 ;
 
     if (classe == CLASSE_VOISIN_SELECTIONNE) {
-        MLV_draw_filled_circle(x, y, 13, MLV_COLOR_BLACK);
+        MLV_draw_filled_circle(x, y, 8, MLV_COLOR_BLACK);
         MLV_draw_text(x - 4, y - 7, "%c", MLV_COLOR_WHITE, classe_symbole(get_point_classe(P)));
         return;
     }
@@ -427,8 +427,8 @@ static void dessiner_point(Point * P,int classe) {
         symbole = MLV_COLOR_BLACK;
     }
 
-    MLV_draw_filled_circle(x, y, 10, c);
-    MLV_draw_circle(x, y, 10, MLV_COLOR_BLACK);
+    MLV_draw_filled_circle(x, y, 6, c);
+    MLV_draw_circle(x, y, 6, MLV_COLOR_BLACK);
     MLV_draw_text(x - 4, y - 7, "%c", symbole, classe_symbole(get_point_classe(P)));
 }
 
@@ -554,8 +554,8 @@ static void dessiner_point_voisin(Point * P, int classe_selectionne) {
     y = ZONE_Y + get_point_position(P, 1) * 250 + 255;
 
     c = classe_color(classe_selectionne);
-    MLV_draw_filled_circle(x, y, 13, c);
-    MLV_draw_circle(x, y, 13, MLV_COLOR_BLACK);
+    MLV_draw_filled_circle(x, y, 8, c);
+    MLV_draw_circle(x, y, 8, MLV_COLOR_BLACK);
     MLV_draw_text(x - 4, y - 7, "%c", MLV_COLOR_WHITE, classe_symbole(get_point_classe(P)));
 }
 
