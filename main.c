@@ -11,12 +11,12 @@ void usage(char * m) {
     printf("usage: %s -i <data_file_directory>\n",m);
 }
 
-void test_tree(PointsList *list,int k) {
+void test_tree(tree_kd *tree, int k, int nb_classes) {
     Point *find_point;
 
-    find_point = create_point(0, create_vector_zero(list->dimensions));
+    find_point = create_point(0, create_vector_zero(get_point_dimensions(tree->P)));
 
-    select_tree_class(list, find_point, k);
+    select_tree_class(tree, find_point, k, nb_classes);
 
     free_point(find_point);
 }
@@ -33,6 +33,7 @@ void test_list(PointsList *list, int k) {
 int main(int argc,char ** argv) {
     FILE *file, *save_file;
     PointsList *list = NULL;
+    tree_kd *tree;
     struct timespec debut,fin;
     int test,k;
     double sec_list, sec_tree;
@@ -59,12 +60,14 @@ int main(int argc,char ** argv) {
         char *mode = argv[3];
         k = atoi(argv[4]);
 
+        tree = list_to_tree(list);
 
         clock_gettime(CLOCK_REALTIME, &debut);
-        test_tree(list, k);
+        test_tree(tree, k, list->nb_classes);
         clock_gettime(CLOCK_REALTIME, &fin);
         sec_tree = (fin.tv_sec - debut.tv_sec) + (fin.tv_nsec - debut.tv_nsec) / 1000000000.0;
 
+        free_tree(tree);
 
         clock_gettime(CLOCK_REALTIME, &debut);
         test_list(list, k);
