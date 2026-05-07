@@ -182,6 +182,7 @@ int interface_lancer(PointsList * list) {
                     File = fopen(fichier,"r");
                     if (File != NULL) {
                         PointsList * newList = load_points_from_file(File);
+
                         if (newList == NULL) {
                             dessiner_bouton(BOUTON_MESSAGE_X, BOUTON_MESSAGE_Y, BOUTON_MESSAGE_LARGEUR, BOUTON_MESSAGE_HAUTEUR, "erreur lors du chargement veillez recommancer");
                             MLV_actualise_window();
@@ -197,6 +198,11 @@ int interface_lancer(PointsList * list) {
                             MLV_wait_milliseconds(1000);
                         }
                         fclose(File);
+                    }
+                    else {
+                        dessiner_bouton(BOUTON_MESSAGE_X, BOUTON_MESSAGE_Y, BOUTON_MESSAGE_LARGEUR, BOUTON_MESSAGE_HAUTEUR, "erreur lors du chargement veillez recommancer");
+                        MLV_actualise_window();
+                        MLV_wait_milliseconds(1000);
                     }
                     free(fichier);
                 }
@@ -217,6 +223,11 @@ int interface_lancer(PointsList * list) {
                             MLV_wait_milliseconds(1000);
                         }
                         fclose(File);
+                    }
+                    else {
+                        dessiner_bouton(BOUTON_MESSAGE_X, BOUTON_MESSAGE_Y, BOUTON_MESSAGE_LARGEUR, BOUTON_MESSAGE_HAUTEUR, "erreur lors de la sauvegarde veillez recommancer");
+                        MLV_actualise_window();
+                        MLV_wait_milliseconds(1000);
                     }
                     free(fichier);
                 }
@@ -269,6 +280,9 @@ int interface_lancer(PointsList * list) {
                     if (list != NULL) {
                         points_list_add_point(list, create_point(classe_new_point, create_vector2_with_values((souris_x - 255 - ZONE_X) / 250., (souris_y - 255 - ZONE_Y) / 250.)));
                         last_point = 1;
+                        if (option_voisin) {
+                            point_selectionne = points_list_get_point(list, list->count - 1);
+                        }
                     }
                 }
                 if (last_point == 1) {
