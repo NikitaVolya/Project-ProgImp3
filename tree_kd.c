@@ -312,22 +312,16 @@ Stack* tree_select_k_nearby(tree_kd *tree, Point *target, int k) {
     return res;
 }
 
-int select_tree_class(PointsList *list, Point *target, int k) {
-    tree_kd *tree;
+int select_tree_class(tree_kd *tree, Point *target, int k, int nb_classes) {
     Stack *best_stack;
     int best_class;
 
-    if (k < 1 || list == NULL || target == NULL)
-        return -1;
-
-    tree = list_to_tree(list);
-    if (tree == NULL)
+    if (k < 1 || tree == NULL || target == NULL)
         return -1;
 
     best_stack = tree_select_k_nearby(tree, target, k);
-    best_class = extract_majority_class_from_stack(best_stack, list->nb_classes);
+    best_class = extract_majority_class_from_stack(best_stack, nb_classes);
 
-    free_tree(tree);
     free_stack(best_stack);
 
     set_point_classe(target, best_class);

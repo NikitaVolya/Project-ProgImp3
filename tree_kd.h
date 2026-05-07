@@ -188,15 +188,4 @@ void free_zone(Zone *zone);
  */
 Stack* tree_select_k_nearby(tree_kd *tree, Point *target, int k);
 
-/**
- * @brief Classifies a point using KD-tree KNN algorithm.
- *
- * Builds a KD-tree, performs nearest neighbor search,
- * and assigns majority class to target.
- *
- * @param[in] list Dataset.
- * @param[in,out] target Point to classify.
- * @param[in] k Number of neighbors.
- * @return Predicted class.
- */
-int select_tree_class(PointsList *list, Point *target, int k);
+int select_tree_class(tree_kd *tree, Point *target, int k, int nb_classes);
