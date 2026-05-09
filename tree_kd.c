@@ -319,7 +319,7 @@ int select_tree_class(tree_kd *tree, Point *target, int k, int nb_classes) {
     if (k < 1 || tree == NULL || target == NULL)
         return -1;
 
-    best_stack = tree_select_k_nearby(tree, target, k);
+    best_stack = tree_select_k_nearby(tree, target, k + 1);
     best_class = extract_majority_class_from_stack(best_stack, nb_classes);
 
     free_stack(best_stack);

@@ -202,7 +202,7 @@ int select_class_bf(PointsList *list, Point *target, int k) {
     if (k < 1 || list == NULL || target == NULL)
         return -1;
 
-    best_stack = point_list_select_k_nearby(list, target, k);
+    best_stack = point_list_select_k_nearby(list, target, k + 1);
     best_class = extract_majority_class_from_stack(best_stack, list->nb_classes);
 
     free_stack(best_stack);

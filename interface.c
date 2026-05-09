@@ -20,7 +20,7 @@
 #define COULEUR_TEXTE MLV_COLOR_BLACK
 #define COULEUR_SURFACE MLV_COLOR_WHITE
 #define COULEUR_ARRIERE_PLAN MLV_rgba(255, 245, 230, 255)
-#define CLASSE_VOISIN_SELECTIONNE -1
+#define CLASSE_VOISIN_SELECTIONNE (-1)
 
 #define ZONE_X 40
 #define ZONE_Y 100
@@ -390,7 +390,7 @@ static void dessiner_zone_affichage(PointsList * list, Point * point_selectionne
         }
 
         if (option_voisinage && point_selectionne != NULL) {
-            kvoisin = point_list_select_k_nearby(list, point_selectionne, k);
+            kvoisin = point_list_select_k_nearby(list, point_selectionne, k + 1);
             if (kvoisin != NULL) {
                 while (!stack_is_empty(kvoisin)) {
                     pd = (PointDistance *) stack_pop(kvoisin);
