@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.21)  9 MAY 2026 16:39
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.21)  10 MAY 2026 13:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -866,59 +866,59 @@ Dictionary: translator-theorem-dictionary, Language: English
 ] [4
 
 ]
-<../results/vary_k/graph_list.png, id=190, 462.528pt x 346.896pt>
+<../results/vary_k/graph_list.png, id=175, 462.528pt x 346.896pt>
 File: ../results/vary_k/graph_list.png Graphic file (type png)
 <use ../results/vary_k/graph_list.png>
-Package pdftex.def Info: ../results/vary_k/graph_list.png  used on input line 6
-0.
+Package pdftex.def Info: ../results/vary_k/graph_list.png  used on input line 7
+2.
 (pdftex.def)             Requested size: 171.14764pt x 128.36009pt.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 60.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 72.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 60.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 72.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-<../results/vary_k/graph_tree.png, id=192, 462.528pt x 346.896pt>
+<../results/vary_k/graph_tree.png, id=177, 462.528pt x 346.896pt>
 File: ../results/vary_k/graph_tree.png Graphic file (type png)
 <use ../results/vary_k/graph_tree.png>
-Package pdftex.def Info: ../results/vary_k/graph_tree.png  used on input line 6
-0.
+Package pdftex.def Info: ../results/vary_k/graph_tree.png  used on input line 7
+2.
 (pdftex.def)             Requested size: 171.14764pt x 128.36009pt.
  [5
 
  <../results/vary_k/graph_list.png> <../results/vary_k/graph_tree.png>]
-<../results/vary_dim/graph_list.png, id=223, 462.528pt x 346.896pt>
+<../results/vary_dim/graph_list.png, id=208, 462.528pt x 346.896pt>
 File: ../results/vary_dim/graph_list.png Graphic file (type png)
 <use ../results/vary_dim/graph_list.png>
 Package pdftex.def Info: ../results/vary_dim/graph_list.png  used on input line
- 73.
+ 85.
 (pdftex.def)             Requested size: 171.14764pt x 128.36009pt.
-<../results/vary_dim/graph_tree.png, id=224, 462.528pt x 346.896pt>
+<../results/vary_dim/graph_tree.png, id=209, 462.528pt x 346.896pt>
 File: ../results/vary_dim/graph_tree.png Graphic file (type png)
 <use ../results/vary_dim/graph_tree.png>
 Package pdftex.def Info: ../results/vary_dim/graph_tree.png  used on input line
- 73.
+ 85.
 (pdftex.def)             Requested size: 171.14764pt x 128.36009pt.
  [6
 
  <../results/vary_dim/graph_list.png> <../results/vary_dim/graph_tree.png>]
-<../results/vary_nb_points/graph_list.png, id=253, 462.528pt x 346.896pt>
+<../results/vary_nb_points/graph_list.png, id=238, 462.528pt x 346.896pt>
 File: ../results/vary_nb_points/graph_list.png Graphic file (type png)
 <use ../results/vary_nb_points/graph_list.png>
 Package pdftex.def Info: ../results/vary_nb_points/graph_list.png  used on inpu
-t line 86.
+t line 98.
 (pdftex.def)             Requested size: 171.14764pt x 128.36009pt.
-<../results/vary_nb_points/graph_tree.png, id=254, 462.528pt x 346.896pt>
+<../results/vary_nb_points/graph_tree.png, id=239, 462.528pt x 346.896pt>
 File: ../results/vary_nb_points/graph_tree.png Graphic file (type png)
 <use ../results/vary_nb_points/graph_tree.png>
 Package pdftex.def Info: ../results/vary_nb_points/graph_tree.png  used on inpu
-t line 86.
+t line 98.
 (pdftex.def)             Requested size: 171.14764pt x 128.36009pt.
  [7
 
@@ -947,25 +947,25 @@ Package rerunfilecheck Info: File `presentation.out' has not changed.
 (rerunfilecheck)             Checksum: FB09A8678DC43FCED90D8E9CF6111AC7;582.
  ) 
 Here is how much of TeX's memory you used:
- 21863 strings out of 476106
- 422100 string characters out of 5793933
- 1935975 words of memory out of 5000000
- 43400 multiletter control sequences out of 15000+600000
- 571644 words of font info for 66 fonts, out of 8000000 for 9000
+ 21833 strings out of 476106
+ 421153 string characters out of 5793933
+ 1938975 words of memory out of 5000000
+ 43370 multiletter control sequences out of 15000+600000
+ 571633 words of font info for 66 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
- 101i,15n,107p,404b,679s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 101i,15n,107p,404b,675s stack positions out of 10000i,1000n,20000p,200000b,200000s
  </home/shadowsgrim/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss10
 00.600pk> </home/shadowsgrim/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec
-/ecsx1095.600pk> </home/shadowsgrim/.texlive2023/texmf-var/fonts/pk/ljfour/jkna
-ppen/ec/ecss1200.600pk> </home/shadowsgrim/.texlive2023/texmf-var/fonts/pk/ljfo
+/ecsx1000.600pk> </home/shadowsgrim/.texlive2023/texmf-var/fonts/pk/ljfour/jkna
+ppen/ec/ecsx1095.600pk> </home/shadowsgrim/.texlive2023/texmf-var/fonts/pk/ljfo
 ur/jknappen/ec/ecss0600.600pk> </home/shadowsgrim/.texlive2023/texmf-var/fonts/
 pk/ljfour/jknappen/ec/ecss0800.600pk> </home/shadowsgrim/.texlive2023/texmf-var
 /fonts/pk/ljfour/jknappen/ec/ecss1095.600pk> </home/shadowsgrim/.texlive2023/te
 xmf-var/fonts/pk/ljfour/jknappen/ec/ecss1440.600pk>
-Output written on presentation.pdf (9 pages, 535029 bytes).
+Output written on presentation.pdf (9 pages, 540285 bytes).
 PDF statistics:
- 540 PDF objects out of 1000 (max. 8388607)
- 311 compressed objects within 4 object streams
+ 553 PDF objects out of 1000 (max. 8388607)
+ 303 compressed objects within 4 object streams
  24 named destinations out of 1000 (max. 500000)
- 215 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 167 words of extra memory for PDF output out of 10000 (max. 10000000)
 

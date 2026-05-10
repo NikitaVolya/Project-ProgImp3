@@ -31,17 +31,29 @@
 	\end{frame}
 
 	\section{Architecture du code}
-	\begin{frame}{Organisation des modules et répartition du travail}
-		\begin{block}{Structure du projet}
-			\begin{itemize}
-				\item \textbf{main.c} : Point d'entrée, mesures de performance et sauvegarde des résultats.
-				\item \textbf{interface.c} : Gestion de l'affichage graphique (MLV).
-				\item \textbf{tree\_kd.c} : Implémentation de la recherche KPPV par arbre KD.
-				\item \textbf{points\_list.c} : Implémentation de la recherche KPPV par liste (force brute).
-				\item \textbf{vector.c / point.c} : Structures de données de base.
-				\item \textbf{test.sh / graphique.py} : Automatisation des tests et génération des graphiques.
-			\end{itemize}
-		\end{block}
+	\begin{frame}{Organisation des modules}
+		\begin{columns}[T]
+			\column{0.5\textwidth}
+				\textbf{Structures de données}
+				\begin{itemize}\small
+					\item \textbf{point.c} : Point multidimensionnel classifié.
+					\item \textbf{vector.c} : Vecteur dynamique générique.
+					\item \textbf{stack.c} : Pile générique.
+					\item \textbf{point\_distance.c} : Association point/distance.
+					\item \textbf{ordered\_points\_list.c} : Liste ordonnée des k plus proches voisins.
+					\item \textbf{points\_list.c} : Liste de points (force brute).
+				\end{itemize}
+			\column{0.5\textwidth}
+				\textbf{Algorithmes et interface}
+				\begin{itemize}\small
+					\item \textbf{tree\_kd.c} : Recherche KPPV par arbre KD.
+					\item \textbf{save.c} : Lecture/écriture des données.
+					\item \textbf{generate.c} : Génération de points aléatoires.
+					\item \textbf{interface.c} : Affichage graphique (MLV).
+					\item \textbf{main.c} : Point d'entrée et mesures de performance.
+					\item \textbf{test.sh / graphique.py} : Tests et graphiques.
+				\end{itemize}
+		\end{columns}
 	\end{frame}
 
 	\section{Analyse des graphiques}
