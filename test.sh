@@ -43,13 +43,8 @@ done
 
 
 
-python3 "$PROJECT_DIR/graphique.py" "$RESULTS/vary_k/save_tree.txt"         "$RESULTS/vary_k/graph_tree.svg"
-python3 "$PROJECT_DIR/graphique.py" "$RESULTS/vary_k/save_list.txt"         "$RESULTS/vary_k/graph_list.svg"
-
-python3 "$PROJECT_DIR/graphique.py" "$RESULTS/vary_dim/save_tree.txt"       "$RESULTS/vary_dim/graph_tree.svg"
-python3 "$PROJECT_DIR/graphique.py" "$RESULTS/vary_dim/save_list.txt"       "$RESULTS/vary_dim/graph_list.svg"
-
-python3 "$PROJECT_DIR/graphique.py" "$RESULTS/vary_nb_points/save_tree.txt" "$RESULTS/vary_nb_points/graph_tree.svg"
-python3 "$PROJECT_DIR/graphique.py" "$RESULTS/vary_nb_points/save_list.txt" "$RESULTS/vary_nb_points/graph_list.svg"
+python3 "$PROJECT_DIR/graphique.py" "$RESULTS/vary_k/save_list.txt"         "$RESULTS/vary_k/save_tree.txt"         "$RESULTS/vary_k/graph.svg"
+python3 "$PROJECT_DIR/graphique.py" "$RESULTS/vary_dim/save_list.txt"       "$RESULTS/vary_dim/save_tree.txt"       "$RESULTS/vary_dim/graph.svg"
+python3 "$PROJECT_DIR/graphique.py" "$RESULTS/vary_nb_points/save_list.txt" "$RESULTS/vary_nb_points/save_tree.txt" "$RESULTS/vary_nb_points/graph.svg"
 
 echo "test fini"

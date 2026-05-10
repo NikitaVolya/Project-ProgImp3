@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.21)  10 MAY 2026 13:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.21)  10 MAY 2026 13:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -866,64 +866,31 @@ Dictionary: translator-theorem-dictionary, Language: English
 ] [4
 
 ]
-<../results/vary_k/graph_list.png, id=175, 462.528pt x 346.896pt>
-File: ../results/vary_k/graph_list.png Graphic file (type png)
-<use ../results/vary_k/graph_list.png>
-Package pdftex.def Info: ../results/vary_k/graph_list.png  used on input line 7
-2.
-(pdftex.def)             Requested size: 171.14764pt x 128.36009pt.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 72.
-
-
-(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 72.
-
-
-(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-<../results/vary_k/graph_tree.png, id=177, 462.528pt x 346.896pt>
-File: ../results/vary_k/graph_tree.png Graphic file (type png)
-<use ../results/vary_k/graph_tree.png>
-Package pdftex.def Info: ../results/vary_k/graph_tree.png  used on input line 7
-2.
-(pdftex.def)             Requested size: 171.14764pt x 128.36009pt.
+<../results/vary_k/graph.png, id=175, 462.528pt x 346.896pt>
+File: ../results/vary_k/graph.png Graphic file (type png)
+<use ../results/vary_k/graph.png>
+Package pdftex.def Info: ../results/vary_k/graph.png  used on input line 64.
+(pdftex.def)             Requested size: 290.9531pt x 218.22275pt.
  [5
 
- <../results/vary_k/graph_list.png> <../results/vary_k/graph_tree.png>]
-<../results/vary_dim/graph_list.png, id=208, 462.528pt x 346.896pt>
-File: ../results/vary_dim/graph_list.png Graphic file (type png)
-<use ../results/vary_dim/graph_list.png>
-Package pdftex.def Info: ../results/vary_dim/graph_list.png  used on input line
- 85.
-(pdftex.def)             Requested size: 171.14764pt x 128.36009pt.
-<../results/vary_dim/graph_tree.png, id=209, 462.528pt x 346.896pt>
-File: ../results/vary_dim/graph_tree.png Graphic file (type png)
-<use ../results/vary_dim/graph_tree.png>
-Package pdftex.def Info: ../results/vary_dim/graph_tree.png  used on input line
- 85.
-(pdftex.def)             Requested size: 171.14764pt x 128.36009pt.
+ <../results/vary_k/graph.png>]
+<../results/vary_dim/graph.png, id=206, 462.528pt x 346.896pt>
+File: ../results/vary_dim/graph.png Graphic file (type png)
+<use ../results/vary_dim/graph.png>
+Package pdftex.def Info: ../results/vary_dim/graph.png  used on input line 69.
+(pdftex.def)             Requested size: 290.9531pt x 218.22275pt.
  [6
 
- <../results/vary_dim/graph_list.png> <../results/vary_dim/graph_tree.png>]
-<../results/vary_nb_points/graph_list.png, id=238, 462.528pt x 346.896pt>
-File: ../results/vary_nb_points/graph_list.png Graphic file (type png)
-<use ../results/vary_nb_points/graph_list.png>
-Package pdftex.def Info: ../results/vary_nb_points/graph_list.png  used on inpu
-t line 98.
-(pdftex.def)             Requested size: 171.14764pt x 128.36009pt.
-<../results/vary_nb_points/graph_tree.png, id=239, 462.528pt x 346.896pt>
-File: ../results/vary_nb_points/graph_tree.png Graphic file (type png)
-<use ../results/vary_nb_points/graph_tree.png>
-Package pdftex.def Info: ../results/vary_nb_points/graph_tree.png  used on inpu
-t line 98.
-(pdftex.def)             Requested size: 171.14764pt x 128.36009pt.
+ <../results/vary_dim/graph.png>]
+<../results/vary_nb_points/graph.png, id=234, 462.528pt x 346.896pt>
+File: ../results/vary_nb_points/graph.png Graphic file (type png)
+<use ../results/vary_nb_points/graph.png>
+Package pdftex.def Info: ../results/vary_nb_points/graph.png  used on input lin
+e 74.
+(pdftex.def)             Requested size: 290.9531pt x 218.22275pt.
  [7
 
- <../results/vary_nb_points/graph_list.png> <../results/vary_nb_points/graph_tr
-ee.png>] [8
+ <../results/vary_nb_points/graph.png>] [8
 
 ] [9
 
@@ -937,8 +904,7 @@ ee.png>] [8
 \tf@snm=\write8
 \openout8 = `presentation.snm'.
 
-
-(./presentation.aux)
+ (./presentation.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -947,11 +913,11 @@ Package rerunfilecheck Info: File `presentation.out' has not changed.
 (rerunfilecheck)             Checksum: FB09A8678DC43FCED90D8E9CF6111AC7;582.
  ) 
 Here is how much of TeX's memory you used:
- 21833 strings out of 476106
- 421153 string characters out of 5793933
+ 21748 strings out of 476106
+ 418849 string characters out of 5793933
  1938975 words of memory out of 5000000
- 43370 multiletter control sequences out of 15000+600000
- 571633 words of font info for 66 fonts, out of 8000000 for 9000
+ 43305 multiletter control sequences out of 15000+600000
+ 564817 words of font info for 46 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
  101i,15n,107p,404b,675s stack positions out of 10000i,1000n,20000p,200000b,200000s
  </home/shadowsgrim/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss10
@@ -962,10 +928,10 @@ ur/jknappen/ec/ecss0600.600pk> </home/shadowsgrim/.texlive2023/texmf-var/fonts/
 pk/ljfour/jknappen/ec/ecss0800.600pk> </home/shadowsgrim/.texlive2023/texmf-var
 /fonts/pk/ljfour/jknappen/ec/ecss1095.600pk> </home/shadowsgrim/.texlive2023/te
 xmf-var/fonts/pk/ljfour/jknappen/ec/ecss1440.600pk>
-Output written on presentation.pdf (9 pages, 540285 bytes).
+Output written on presentation.pdf (9 pages, 332131 bytes).
 PDF statistics:
- 553 PDF objects out of 1000 (max. 8388607)
+ 547 PDF objects out of 1000 (max. 8388607)
  303 compressed objects within 4 object streams
  24 named destinations out of 1000 (max. 500000)
- 167 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 152 words of extra memory for PDF output out of 10000 (max. 10000000)
 
