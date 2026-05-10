@@ -20,14 +20,14 @@ echo "temps nb_points" > "$RESULTS/vary_nb_points/save_list.txt"
 
 
 
-for k in 1 3 5 10 20 30 40 60 70 80 90 95 100; do
+for k in 2 5 10 15 20 25 30 35 40 45 60 65 70 75 80 85 90 95 100; do
     (cd "$RESULTS/vary_k" && "$MAIN" -t "$DATA/data_for_k.txt" k "$k")
     (cd "$RESULTS/vary_k" && "$MAIN" -t "$DATA/data_for_k.txt" k "$k")
     (cd "$RESULTS/vary_k" && "$MAIN" -t "$DATA/data_for_k.txt" k "$k")
 done
 
 
-for dim in 2 10 20 30 40 60 70 80 90 95 100; do
+for dim in 2 5 10 15 20 25 30 35 40 45 60 65 70 75 80 85 90 95 100; do
     (cd "$RESULTS/vary_dim" && "$MAIN" -t "$DATA/data_dim_$dim.txt" d 10)
     (cd "$RESULTS/vary_dim" && "$MAIN" -t "$DATA/data_dim_$dim.txt" d 10)
     (cd "$RESULTS/vary_dim" && "$MAIN" -t "$DATA/data_dim_$dim.txt" d 10)
@@ -35,7 +35,7 @@ done
 
 
 
-for nb in 10 30 100 300 1000 3000 10000 30000 100000 300000 1000000; do
+for nb in 10 20 30 100 200 300 1000 2000 3000 10000 20000 30000 100000 200000 300000 1000000; do
     (cd "$RESULTS/vary_nb_points" && "$MAIN" -t "$DATA/data_nb_$nb.txt" p 10)
     (cd "$RESULTS/vary_nb_points" && "$MAIN" -t "$DATA/data_nb_$nb.txt" p 10)
     (cd "$RESULTS/vary_nb_points" && "$MAIN" -t "$DATA/data_nb_$nb.txt" p 10)
